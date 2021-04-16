@@ -11,18 +11,19 @@ source ./setup.sh
 
 trezor-crypto
 ```bash 
-cd crypto
+cd src/crypto
 make
 ``` 
 
 secp256k1 from Bitcoin source, probably sgould use a more optimal library
 ```bash 
-cd secp256k1
+cd src/secp256k1
 make
 ``` 
 
 - Third compile the program (test.cpp)
 
-```bash 
+```bash
+cd src 
 make
 ```
