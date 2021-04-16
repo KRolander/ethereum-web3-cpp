@@ -1,0 +1,106 @@
+var Tx = require('ethereumjs-tx')
+const Web3 = require('web3')
+const Web3Utils = require('web3-utils');
+var Eth = require('web3-eth');
+
+
+const web3 = new Web3(new Web3.providers.HttpProvider('http://127.0.0.1:7545'))
+
+const pricateKeyStr = '4bf790d8eb389b31dbe9fe8d357792e61577ed34810b5481c802219afe814e0a'
+const privateKey = Buffer.from(pricateKeyStr, 'hex')
+
+const from = '0xc9E6181F370fFA6c44707C60Dd5a1B317A6DDBF2'
+
+web3.eth.defaultAccount =  '0xc9E6181F370fFA6c44707C60Dd5a1B317A6DDBF2'
+
+const contractAddress = '0xE168ACB9CE197c378c2e0E211b5A79D685922b77' //'0x44b72e86bc2dA10BaaDFA6571c3B044dABeb0769' // 
+
+const contractABI = [
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_num",
+				"type": "uint8"
+			}
+		],
+		"name": "toByte",
+		"outputs": [
+			{
+				"name": "_ret",
+				"type": "bytes1"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "my_get_bytes",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bytes8[32]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "d",
+				"type": "uint8[32]"
+			}
+		],
+		"name": "my_set",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "my_get",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	}
+]
+
+
+const  rawSmartContract = '0x6060604052341561000f57600080fd5b6104098061001e6000396000f300606060405260043610610062576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff168063a86b73f014610067578063b4cd441e146100e5578063bc47000614610135578063e82bfc1f1461017b575b600080fd5b341561007257600080fd5b61008b600480803560ff169060200190919050506101a4565b60405180827effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916815260200191505060405180910390f35b34156100f057600080fd5b6100f86101d0565b60405180826020800280838360005b83811015610122578082015181840152602081019050610107565b5050505090500191505060405180910390f35b341561014057600080fd5b6101796004808061040001906020806020026040519081016040528092919082602080028082843782019150505050509190505061032f565b005b341561018657600080fd5b61018e610391565b6040518082815260200191505060405180910390f35b6000817f0100000000000000000000000000000000000000000000000000000000000000029050919050565b6101d8610399565b60008090505b6020811015610295576102146000826020811015156101f957fe5b602091828204019190069054906101000a900460ff166101a4565b7effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff191660018260208110151561024557fe5b600491828204019190066008026101000a81548167ffffffffffffffff021916908378010000000000000000000000000000000000000000000000009004021790555080806001019150506101de565b6001602080602002604051908101604052809291908260208015610324576020028201916000905b82829054906101000a900478010000000000000000000000000000000000000000000000000277ffffffffffffffffffffffffffffffffffffffffffffffff1916815260200190600801906020826007010492830192600103820291508084116102bd5790505b505050505091505090565b60008090505b602081101561038d57818160208110151561034c57fe5b602002015160008260208110151561036057fe5b602091828204019190066101000a81548160ff021916908360ff1602179055508080600101915050610335565b5050565b600080905090565b610400604051908101604052806020905b600077ffffffffffffffffffffffffffffffffffffffffffffffff19168152602001906001900390816103aa57905050905600a165627a7a72305820b013a362064118c75f2becc98e479334beac0d8dae9a7ad6bad95414d688aa2a0029'
+
+const txObject = {
+    nonce: '0x0',
+    gasPrice: '0x4A817C800',
+    gas: '0x6691B7', 
+    data: rawSmartContract
+}
+
+
+
+const tx = new Tx(txObject)
+tx.sign(privateKey)
+
+
+const serializedTx = tx.serialize()
+const raw = '0x' + serializedTx.toString('hex')
+console.log('raw : ',raw)
+
+
+
+web3.eth.sendRawTransaction(raw, (err, txHash) => {
+     console.log('txHash:', txHash) })
+
