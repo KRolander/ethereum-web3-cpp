@@ -18,7 +18,7 @@
 #include "Util.h"
 #include "Transaction.h"
 #define PRIVATE_KEY_SIZE 32
-#define INFURA_HOST "rinkeby.infura.io"
+#define INFURA_HOST "http://127.0.0.1:7545"
 #define INFURA_PATH "/<YOUR_INFURA_ID>"
 
 #define CONTRACT_ADDRESS "0x8668"
@@ -42,7 +42,7 @@ int main()
     std::cout << std::hex << hexStr << std::endl;
 
     // uint8_t toStr[] = CONTRACT_ADDRESS;
-    std::string from = "afc46b7fdfc9eb29d67362a6e4df578adeb2eb610af22ae8b3fcb8b3956c3bf3";
+    std::string from = "4bf790d8eb389b31dbe9fe8d357792e61577ed34810b5481c802219afe814e0a"; //"afc46b7fdfc9eb29d67362a6e4df578adeb2eb610af22ae8b3fcb8b3956c3bf3";
     // Set PrivateKey
     // std::vector<uint8_t> privetKeyVector = Util::ConvertStringToVector(&from);
     // uint8_t * privetKeyArray = privetKeyVector.data();
@@ -61,10 +61,10 @@ int main()
     std::cout << std::endl;
 
     // std::string uintToStr = (char *) toStr;
-    uint32_t nonceVal = 7;
-    uint64_t gasPriceVal = 46038239233;
-    uint32_t gasLimitVal = 6721975;
-    std::string toStr = "0xE168ACB9CE197c378c2e0E211b5A79D685922b77"; //CONTRACT_ADDRESS;
+    uint32_t nonceVal = 5;
+    uint64_t gasPriceVal = 0x4A817C800; //46038239233;
+    uint32_t gasLimitVal = 0x6691B7;
+    std::string toStr = "0x0154B359b49fE8790A5397A88213d4C99B9aA15C"; //CONTRACT_ADDRESS;
     std::string valueStr = "0x00";                      //"0x00";
     uint8_t dataStr[100];
     std::string func = "my_set(uint8[32])"; //"get(uint256)";
@@ -72,6 +72,7 @@ int main()
     uint32_t dataParams = 123;
     char dataString[70]; 
     uint8_t rawdata[32] = {0xdb, 0x8a, 0x04, 0x22, 0x24, 0xc4, 0x4b, 0x05, 0xa9, 0x7e, 0x5f, 0x2a, 0x41, 0x0e, 0xa6, 0x04, 0xd8, 0x18, 0xbb, 0xe9, 0xe6, 0xa5, 0xd2, 0xbe, 0xed, 0x57, 0x78, 0xe7, 0x9e, 0xfd, 0x4a, 0xcf};
+    // uint8_t rawdata[32] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31};
     
    
     Util::BufToCharStr(dataString, rawdata, 32);
