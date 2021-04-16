@@ -44,7 +44,7 @@ Transaction::Transaction(Web3 *_web3, const string *address)
     web3 = _web3;
     contractAddress = address;
     options.gas = 0;
-    strcpy(options.from, "0x3cB35945F6c53DFa3B6099A68383Cf90fF9DB303");
+    strcpy(options.from, "0xc9E6181F370fFA6c44707C60Dd5a1B317A6DDBF2");
     strcpy(options.to, "");
     strcpy(options.gasPrice, "0");
 
@@ -887,8 +887,8 @@ vector<uint8_t> Transaction::RlpEncodeForRawTransaction(
     }
     vector<uint8_t> nonce = Util::ConvertNumberToVector(nonceVal);
 
-    int64_t gPv = 46038239233; //20000000000;
-    vector<uint8_t> gasPrice = Util::ConvertNumberToVector64(gPv);
+    int64_t gPv = 0x4A817C800; //20000000000;
+    vector<uint8_t> gasPrice = Util::ConvertNumberToVector64(gasPriceVal);
 
     // vector<uint8_t> gasPrice = Util::ConvertNumberToVector(gasPriceVal);
 
