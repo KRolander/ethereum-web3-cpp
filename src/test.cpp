@@ -17,6 +17,7 @@
 #include <stdint.h>
 #include "Util.h"
 #include "Transaction.h"
+#include "Payload.h"
 #define PRIVATE_KEY_SIZE 32
 #define INFURA_HOST "http://127.0.0.1:7545"
 #define INFURA_PATH "/<YOUR_INFURA_ID>"
@@ -67,8 +68,15 @@ int main()
     std::string toStr = "0x0154B359b49fE8790A5397A88213d4C99B9aA15C"; //CONTRACT_ADDRESS;
     std::string valueStr = "0x00";                      //"0x00";
     uint8_t dataStr[100];
-    std::string func = "my_set(uint8[32])"; //"get(uint256)";
+    std::string func = "my_set(uint256,uint)"; // "my_set(uint8[32])"; //"get(uint256)";
 
+    Payload transactionPayload; 
+    transactionPayload.signedPayload("db8a042224c44b05a97e5f2a410ea604d818bbe9e6a5d2beed5778e79efd4acf", 0x22, "4bf790d8eb389b31dbe9fe8d357792e61577ed34810b5481c802219afe814e0a");
+    
+    
+   
+    std::cout << "########## Transaction Payload Test" << std::endl;
+    std::cout << "Hash = " << transactionPayload.r << std::endl;
     uint32_t dataParams = 123;
     char dataString[70]; 
     uint8_t rawdata[32] = {0xdb, 0x8a, 0x04, 0x22, 0x24, 0xc4, 0x4b, 0x05, 0xa9, 0x7e, 0x5f, 0x2a, 0x41, 0x0e, 0xa6, 0x04, 0xd8, 0x18, 0xbb, 0xe9, 0xe6, 0xa5, 0xd2, 0xbe, 0xed, 0x57, 0x78, 0xe7, 0x9e, 0xfd, 0x4a, 0xcf};
@@ -95,7 +103,10 @@ int main()
     // std::cout << std::endl;
     uint8_t uintData[2] = {0xdb, 0x8a};
 
-    std::string p2 = transaction.SetupContractData(&func, rawdata);
+    //std::string p2 = transaction.SetupContractData(&func, rawdata);
+    int32_t uint8Data = 0x77;
+
+    std::string p2 = transaction.SetupContractData(&func, transactionPayload.r, uint8Data);
 
     std::cout << "Contract " << p2 << std::endl;
 
