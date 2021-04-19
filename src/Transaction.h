@@ -17,6 +17,7 @@
 #include <vector>
 
 #include "crypto/sha3.h"
+#include "Util.h"
 
 
 using namespace std;

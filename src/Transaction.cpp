@@ -3,12 +3,11 @@
 //   Address: LEAT Laboratory, Université Côte d'Azur
 //
 //   The Transaction class is used for creating the transaction sceleton and creating the format
-//   allowing the interaction with the Smart Contracts. This class contains also the send Transaction function 
+//   allowing the interaction with the Smart Contracts. This class contains also the send Transaction function
 //   finalizing the Tx format.
 //
-//    TODO : add curl using Web3js format    
+//    TODO : add curl using Web3js format
 //
-
 
 #include <iostream>
 #include <iomanip>
@@ -51,25 +50,12 @@ Transaction::Transaction(Web3 *_web3, const string *address)
     ctx = secp256k1_context_create(SECP256K1_CONTEXT_SIGN);
 }
 
-
-char HexLookUp[] = "0123456789abcdef";    
-void bytes2hex (unsigned char *src, char *out, int len)
-{
-    while(len--)
-    {
-        *out++ = HexLookUp[*src >> 4];
-        *out++ = HexLookUp[*src & 0x0F];
-        src++;
-    }
-    *out = 0;
-}
-
 // A simple atoi() function
-int myAtoi(char* str)
+int myAtoi(char *str)
 {
     // Initialize result
     int res = 0;
- 
+
     // Iterate through all characters
     // of input string and update result
     // take ASCII character of corosponding digit and
@@ -78,7 +64,7 @@ int myAtoi(char* str)
     // digits left to update running total
     for (int i = 0; str[i] != '\0'; ++i)
         res = res * 10 + str[i] - '0';
- 
+
     // return result.
     return res;
 }
@@ -147,14 +133,25 @@ string Transaction::SetupContractData(const string *func, ...)
             paramCount++;
         }
     }
-    std::cout << "Here" << std::endl;
-
+    std::cout << "Here : " << paramCount << std::endl;
 
     va_list args;
     va_start(args, paramCount);
     for (int i = 0; i < paramCount; ++i)
     {
-        std::cout << "Params " << params[i].c_str() << std::endl;
+        std::cout << "params[0].c_str()" << params[0].c_str() << std::endl;
+        std::cout << "params[1].c_str()" << params[1].c_str() << std::endl;
+
+        // if (strncmp(params[0].c_str(), "uint256", 7 /*sizeof("bytes")*/) == 0)
+        // {
+        //     std::cout << "======= > Here is okay " << std::endl;
+        // }
+        // if (strncmp(params[1].c_str(), "bytes", 5 /*sizeof("bytes")*/) == 0)
+        // {
+        //     std::cout << "======= > Here is okay 2" << std::endl;
+        // }
+
+        std::cout << "Params " << params[i].c_str() << "i == " << i << std::endl;
         if (strncmp(params[i].c_str(), "uint", 4 /*sizeof("uint")*/) == 0)
         {
             if ((strncmp(params[i].c_str(), "uint8[", 6 /*sizeof("uint")*/) == 0) && (strncmp(params[i].c_str(), "uint8[]", 7 /*sizeof("uint")*/) != 0))
@@ -174,34 +171,33 @@ string Transaction::SetupContractData(const string *func, ...)
                 int numbOfTabElements;
                 numbOfTabElements = std::atoi(p2);
 
-                // Get data (uint8_t[]) array 
+                // Get data (uint8_t[]) array
                 uint8_t *data = va_arg(args, uint8_t *);
 
                 string output;
-                
-                // Iterate on the array's elements -> convert uint to hex bytes to finally obtain hex string 
+
+                // Iterate on the array's elements -> convert uint to hex bytes to finally obtain hex string
                 for (int i = 0; i < numbOfTabElements; i++)
                 {
                     // std::cout << " data[" << i << "] = " << (uint32_t)data[i] << std::endl;
-                    uint32_t tmpData = (uint32_t) data[i];
+                    uint32_t tmpData = (uint32_t)data[i];
                     output = output + GenerateBytesForUint(tmpData);
                 }
                 ret = ret + output;
                 std::cout << " Overall data : " << ret << std::endl;
             }
-            else if(strncmp(params[i].c_str(), "uint8[]", 7 /*sizeof("uint")*/) == 0)
+            else if (strncmp(params[i].c_str(), "uint8[]", 7 /*sizeof("uint")*/) == 0)
             {
 
                 std::cout << "###### Pleasse Precise length of the input array" << std::endl;
-                 // Get data (uint8_t[]) array 
+                // Get data (uint8_t[]) array
                 // uint8_t *data = va_arg(args, uint8_t *);
                 // uint32_t numbOfTabElements = sizeof(data) / sizeof(uint8_t);
-                
 
-                // 
+                //
                 // std::cout << "######### number of element : " << numbOfTabElements << std::endl;
-              
-                // // Prefix indicating that we want to send an uint8_t array 
+
+                // // Prefix indicating that we want to send an uint8_t array
                 // char prefix[65] = {'0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '2', '0'};
 
                 // string output(prefix);
@@ -216,6 +212,12 @@ string Transaction::SetupContractData(const string *func, ...)
                 // ret = ret + output;
                 // std::cout << " Overall data : " << ret << std::endl;
             }
+            // uint256 is already a hex string so nothing to do
+            else if (strncmp(params[i].c_str(), "uint256", 7 /*sizeof("uint")*/) == 0)
+            {
+                ret = ret + va_arg(args, string);
+                std::cout << " => => => => " << ret << std::endl;
+            }
             else
             {
                 std::cout << "uint is detected" << std::endl;
@@ -228,6 +230,7 @@ string Transaction::SetupContractData(const string *func, ...)
         {
             string output = GenerateBytesForInt(va_arg(args, int32_t));
             ret = ret + string(output);
+            std::cout << " => => => => " << ret << std::endl;
         }
         else if (strncmp(params[i].c_str(), "address", sizeof("address")) == 0)
         {
@@ -278,6 +281,11 @@ string Transaction::SetupContractData(const string *func, ...)
                 // printf("Here is my output %s\n", charOutput);
                 ret = ret + string(charOutput);
             }
+            std::cout << " => => => => " << ret << std::endl;
+        }
+        else
+        {
+            std::cout << " Problem HERE " << std::endl;
         }
     }
     va_end(args);
@@ -309,10 +317,8 @@ string Transaction::Call(const string *param)
 }
 
 string Transaction::SendTransaction(uint32_t nonceVal, uint64_t gasPriceVal, uint32_t gasLimitVal,
-                                 string *toStr, string *valueStr, string *dataStr)
+                                    string *toStr, string *valueStr, string *dataStr)
 {
-
-
 
     // std::cout << " Params : " << std::endl;
     // std::cout << "toStr " << toStr[0] << std::endl;
@@ -330,17 +336,13 @@ string Transaction::SendTransaction(uint32_t nonceVal, uint64_t gasPriceVal, uin
                                                        signature, recid[0]);
     // string paramStr = Util::VectorToString(param);
 
+    char param_c[param.size() * 2 + 1]; // 32 * 2 + 1
+    Util::bytes2hex(&param[0], param_c, param.size());
 
-
-    char param_c[param.size()*2 + 1]; // 32 * 2 + 1
-    bytes2hex(&param[0], param_c, param.size());
-    
-    std::string paramStr = "0x"; 
+    std::string paramStr = "0x";
     std::string param_hex(param_c);
 
     paramStr = paramStr + param_hex;
-
-
 
     // std::cout << "Param to send : " << paramStr << std::endl;
 #if 0
@@ -392,7 +394,7 @@ int Transaction::chhex(char ch)
 }
 
 void Transaction::GenerateSignature(uint8_t *signature, int *recid, uint32_t nonceVal, uint64_t gasPriceVal, uint32_t gasLimitVal,
-                                 string *toStr, string *valueStr, string *dataStr)
+                                    string *toStr, string *valueStr, string *dataStr)
 {
 
     vector<uint8_t> encoded = RlpEncode(nonceVal, gasPriceVal, gasLimitVal, toStr, valueStr, dataStr);
@@ -400,22 +402,17 @@ void Transaction::GenerateSignature(uint8_t *signature, int *recid, uint32_t non
     // hash
     // string t =  Util::VectorToString(encoded); Modified 19/02/2021
 
-
-    
     // std::cout << " ######### Rlp encoded " << t <<  std::endl;
 
+    char t_c[encoded.size() * 2 + 1]; // 32 * 2 + 1
+    Util::bytes2hex(&encoded[0], t_c, encoded.size());
 
-    char t_c[encoded.size()*2 + 1]; // 32 * 2 + 1
-    bytes2hex(&encoded[0], t_c, encoded.size());
-    
-    std::string t = "0x"; 
+    std::string t = "0x";
     std::string t_hex(t_c);
 
     t = t + t_hex;
 
     // std::cout << " ######### Rlp encoded alternative " << t <<  std::endl;
-
-
 
     // TODO:
 
@@ -450,13 +447,10 @@ void Transaction::GenerateSignature(uint8_t *signature, int *recid, uint32_t non
     uint8_t digest[SHA3_256_DIGEST_LENGTH];
     // FIPS202_SHA3_256(toHash, toHashSize, digest);
 
-
-
     keccak_256(toHash, toHashSize, digest);
 
     // Keccak(1088, 512, toHash, toHashSize, 0x01, digest, 32);
-    
-    
+
     // sha3_256(toHash, toHashSize, digest);
 
     //    uint8_t hash[32];
@@ -522,9 +516,7 @@ string Transaction::GenerateContractBytes(const string *func)
     uint8_t digest[SHA3_256_DIGEST_LENGTH];
     // FIPS202_SHA3_256(toHash, toHashSize, digest);
 
-
     keccak_256(toHash, toHashSize, digest);
-
 
     // std::cout << "SC Keccak : " << std::endl;
 
@@ -551,15 +543,13 @@ string Transaction::GenerateContractBytes(const string *func)
     // std::cout << "String Hash " << out << std::endl;
 
     char out_c[65]; // 32 * 2 + 1
-    bytes2hex(digest, out_c, 32);
-    
-    std::string out_alternative = "0x"; 
+    Util::bytes2hex(digest, out_c, 32);
+
+    std::string out_alternative = "0x";
     std::string out_hash(out_c);
 
-    out_alternative = out_alternative + out_hash; 
+    out_alternative = out_alternative + out_hash;
     // std::cout << "String Hash alternative " << out_alternative << std::endl;
-
-
 
     // std::string out = "0x6d4ce63caa65600744ac797760560da39ebd16e8240936b51f53368ef9e0e01f";
 
@@ -569,7 +559,6 @@ string Transaction::GenerateContractBytes(const string *func)
     // return out;
     return out_alternative;
 }
-
 
 string Transaction::GenerateBytesForUint(const uint32_t value)
 {
@@ -728,7 +717,6 @@ vector<uint8_t> Transaction::RlpEncode(
     // std::vector<uint8_t> data(200);
     // data = Util::ConvertStringToVector(dataStr);
 
-
     // Until here it seems ok
     std::cout << "ValueStr : " << valueStr[0] << std::endl;
 
@@ -738,7 +726,6 @@ vector<uint8_t> Transaction::RlpEncode(
         std::cout << (uint32_t)*i << ' ';
 
     std::cout << std::endl;
-
 
     vector<uint8_t> outputNonce = Util::RlpEncodeItemWithVector(nonce);
     vector<uint8_t> outputGasPrice = Util::RlpEncodeItemWithVector(gasPrice);
@@ -959,4 +946,3 @@ vector<uint8_t> Transaction::RlpEncodeForRawTransaction(
 
     return encoded;
 }
-
