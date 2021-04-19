@@ -16,6 +16,8 @@
 
 #define MAX_SIZE 4096
 
+static char HexLookUp[] = "0123456789abcdef";
+
 class Util {
 public:
     // RLP implementation
@@ -38,6 +40,8 @@ public:
     static void    BufToCharStr(char* str, const uint8_t* buf, uint32_t len);
     static void    VectorToCharStr(char* str, const std::vector<uint8_t> buf);
     static std::string  VectorToString(const std::vector<uint8_t> buf);
+
+    static void bytes2hex(unsigned char *src, char *out, int len);
 
 };
 

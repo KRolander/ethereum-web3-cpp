@@ -326,3 +326,14 @@ std::string Util::VectorToString(const std::vector<uint8_t> buf) {
     }
     return ret;
 }
+
+void Util::bytes2hex(unsigned char *src, char *out, int len)
+{
+    while (len--)
+    {
+        *out++ = HexLookUp[*src >> 4];
+        *out++ = HexLookUp[*src & 0x0F];
+        src++;
+    }
+    *out = 0;
+}
