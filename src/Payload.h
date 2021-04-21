@@ -16,13 +16,14 @@
 #include "Transaction.h"
 
 #include "Util.h"
+#include "Transaction.h"
+#include "Web3.h"
 #include "crypto/sha3.h"
 
 #define MAX_SIZE 4096
 
 class Payload {
 public:
-  
   std::string r;
   std::string s;
 

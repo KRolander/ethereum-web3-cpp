@@ -16,6 +16,12 @@
 
 #define PRIVATE_KEY_SIZE 32
 #define SHA3_256_DIGEST_LENGTH 32
+#define SIGNATURE_LENGTH 64
+
+#define INFURA_HOST "http://127.0.0.1:7545"
+#define INFURA_PATH "/<YOUR_INFURA_ID>"
+
+#define CONTRACT_ADDRESS "0x8668"
 
 // char HexLookUp[] = "0123456789abcdef";    
 // void Payload::bytes2hex (unsigned char *src, char *out, int len)
@@ -86,7 +92,21 @@ void Payload::signedPayload(std::string data, uint8_t ID, std::string privKey){
 
     // TODO signe here
 
-    r = out_c;
+    Web3 web3((std::string *)INFURA_HOST, (std::string *)INFURA_PATH);
+    Transaction transaction(&web3, (std::string *)CONTRACT_ADDRESS);
+
+    transaction.SetPrivateKey(privateKeyBytes);
+
+    uint8_t signature[SIGNATURE_LENGTH];
+    int recid[1] = {0};
+
+    transaction.Sign(hashDigest, signature, recid);
+
+    char out_char_signature[129]; // 64 * 2 + 1
+    Util::bytes2hex(signature, out_char_signature, 64);
+    std::string out_signature(out_char_signature);    
+
+    r = out_signature;
     s = "hy";
 
 }
