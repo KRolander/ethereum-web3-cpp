@@ -43,7 +43,7 @@ Transaction::Transaction(Web3 *_web3, const string *address)
     web3 = _web3;
     contractAddress = address;
     options.gas = 0;
-    strcpy(options.from, "0xc9E6181F370fFA6c44707C60Dd5a1B317A6DDBF2");
+    strcpy(options.from, "0x51Cf24e50282CD6168916De6a8A24c3D4Eb74598");
     strcpy(options.to, "");
     strcpy(options.gasPrice, "0");
 
@@ -139,8 +139,10 @@ string Transaction::SetupContractData(const string *func, ...)
     va_start(args, paramCount);
     for (int i = 0; i < paramCount; ++i)
     {
-        std::cout << "params[0].c_str()" << params[0].c_str() << std::endl;
-        std::cout << "params[1].c_str()" << params[1].c_str() << std::endl;
+        std::cout << "params[0].c_str() " << params[0].c_str() << std::endl;
+        std::cout << "params[1].c_str() " << params[1].c_str() << std::endl;
+        std::cout << "params[2].c_str() " << params[2].c_str() << std::endl;
+        std::cout << "params[3].c_str() " << params[3].c_str() << std::endl;
 
         // if (strncmp(params[0].c_str(), "uint256", 7 /*sizeof("bytes")*/) == 0)
         // {
@@ -151,9 +153,10 @@ string Transaction::SetupContractData(const string *func, ...)
         //     std::cout << "======= > Here is okay 2" << std::endl;
         // }
 
-        std::cout << "Params " << params[i].c_str() << "i == " << i << std::endl;
+        std::cout << "Params " << params[i].c_str() << " i == " << i << std::endl;
         if (strncmp(params[i].c_str(), "uint", 4 /*sizeof("uint")*/) == 0)
         {
+            std::cout << " ############## Here " << std::endl;
             if ((strncmp(params[i].c_str(), "uint8[", 6 /*sizeof("uint")*/) == 0) && (strncmp(params[i].c_str(), "uint8[]", 7 /*sizeof("uint")*/) != 0))
             {
                 std::cout << "uint8[ is detected" << std::endl;
@@ -185,6 +188,13 @@ string Transaction::SetupContractData(const string *func, ...)
                 }
                 ret = ret + output;
                 std::cout << " Overall data : " << ret << std::endl;
+            }
+            else if((strncmp(params[i].c_str(), "uint8", 5 /*sizeof("uint")*/) == 0) && (strncmp(params[i].c_str(), "uint8[", 6 /*sizeof("uint")*/) != 0) && (strncmp(params[i].c_str(), "uint8[]", 7 /*sizeof("uint")*/) != 0) )
+            {   
+                std::cout << "uint8 is detected" << std::endl;
+                string output = GenerateBytesForUint(va_arg(args, uint32_t));
+
+                ret = ret + output;
             }
             else if (strncmp(params[i].c_str(), "uint8[]", 7 /*sizeof("uint")*/) == 0)
             {

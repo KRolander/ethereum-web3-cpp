@@ -46,6 +46,7 @@ public:
             string* toStr, string* valueStr, string* dataStr);
     void HexStrToUchar(unsigned char *dest, const char *source, int bytes_n);
     int chhex(char ch);
+    void Sign(uint8_t* hash, uint8_t* sig, int* recid);
 private:
     // Log Debug;
     // #define LOG(x) Debug.println(x)
@@ -70,7 +71,7 @@ private:
     vector<uint8_t> RlpEncodeForRawTransaction(
             uint32_t nonceVal, uint64_t gasPriceVal, uint32_t  gasLimitVal,
             string* toStr, string* valueStr, string* dataStr, uint8_t* sig, uint8_t recid);
-    void Sign(uint8_t* hash, uint8_t* sig, int* recid);
+    
 };
 
 
