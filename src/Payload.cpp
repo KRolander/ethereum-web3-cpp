@@ -58,7 +58,7 @@ void Payload::HexStrToUchar(unsigned char *dest, const char *source, int bytes_n
 // the data concatenation must be done in the same way in the Smart Contract
 // else the signature could not be verified 
 
-void Payload::signedPayload(std::string data, uint8_t ID, std::string privKey){
+void Payload::signedPayload(std::string data, uint8_t ID, std::string privKey, Transaction& transactionObject){
 
     // string to uint8_t
     uint8_t privateKeyBytes[PRIVATE_KEY_SIZE];
@@ -92,22 +92,26 @@ void Payload::signedPayload(std::string data, uint8_t ID, std::string privKey){
 
     // TODO signe here
 
-    Web3 web3((std::string *)INFURA_HOST, (std::string *)INFURA_PATH);
-    Transaction transaction(&web3, (std::string *)CONTRACT_ADDRESS);
+    // Web3 web3((std::string *)INFURA_HOST, (std::string *)INFURA_PATH);
+    // Transaction transaction(&web3, (std::string *)CONTRACT_ADDRESS);
 
-    transaction.SetPrivateKey(privateKeyBytes);
+    transactionObject.SetPrivateKey(privateKeyBytes);
 
     uint8_t signature[SIGNATURE_LENGTH];
     int recid[1] = {0};
 
-    transaction.Sign(hashDigest, signature, recid);
+    transactionObject.Sign(hashDigest, signature, recid);
 
     char out_char_signature[129]; // 64 * 2 + 1
     Util::bytes2hex(signature, out_char_signature, 64);
     std::string out_signature(out_char_signature);    
 
-    r = out_signature;
-    s = "hy";
+    std::string signature_r =  out_signature.substr(0, 64);
+    std::string signature_s =  out_signature.substr(64, 127);
+
+
+    r = signature_r;
+    s = signature_s;
 
 }
 

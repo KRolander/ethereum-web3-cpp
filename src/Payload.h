@@ -28,7 +28,7 @@ public:
   std::string s;
 
   //  sign(Hash(data || ID)) with privateKey, return signature{s, r}
-  void signedPayload(std::string data, uint8_t ID, std::string privKey);
+  void signedPayload(std::string data, uint8_t ID, std::string privKey, Transaction& transactionObject);
   void Test();
 
   
