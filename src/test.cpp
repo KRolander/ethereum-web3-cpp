@@ -42,18 +42,12 @@ int main()
 
     std::cout << std::hex << hexStr << std::endl;
 
-    // uint8_t toStr[] = CONTRACT_ADDRESS;
     std::string from = "b37bedd521a67af5cdce434ec9177e2931d82ff92427386d8e8fc8e363d780a4"; //"afc46b7fdfc9eb29d67362a6e4df578adeb2eb610af22ae8b3fcb8b3956c3bf3";
-    // Set PrivateKey
-    // std::vector<uint8_t> privetKeyVector = Util::ConvertStringToVector(&from);
-    // uint8_t * privetKeyArray = privetKeyVector.data();
-    // contract.SetPrivateKey(privetKeyArray);
 
     uint8_t privateKeyBytes[PRIVATE_KEY_SIZE];
     HexStrToUchar(privateKeyBytes, &from[0], from.size());
 
-    transaction.SetPrivateKey(privateKeyBytes);
-
+    
     int i;
     for (i = 0; i < PRIVATE_KEY_SIZE; i++)
     {
@@ -69,66 +63,35 @@ int main()
     uint8_t dataStr[100];
     std::string func = "setMyData(uint256,uint8,uint256,uint256)"; // "my_set(uint8[32])"; //"get(uint256)";
 
-    // Payload transactionPayload; 
-    // transactionPayload.signedPayload("db8a042224c44b05a97e5f2a410ea604d818bbe9e6a5d2beed5778e79efd4acf", 0x77, "2a53a7438211849cb95cd4ffe182e01711c34dd525707ab1a0a30fff0b18605b");
-    
-    // std::cout << "########## Transaction Payload Test" << std::endl;
-    // std::cout << "Hash = " << transactionPayload.r << std::endl;
+    Payload transactionPayload; 
+    int32_t ID = 0x77;
+    std::string payloadData = "db8a042224c44b05a97e5f2a410ea604d818bbe9e6a5d2beed5778e79efd4acf";
+    std:string secondPrivateKey =  "2a53a7438211849cb95cd4ffe182e01711c34dd525707ab1a0a30fff0b18605b";
+
+
+    transactionPayload.signedPayload(payloadData, ID, secondPrivateKey, transaction);
+    transaction.SetPrivateKey(privateKeyBytes);
+
+    std::cout << "########## Transaction Payload Test" << std::endl;
+    std::cout << " Signature r = " << transactionPayload.r << std::endl;
+    std::cout << " Signature s = " << transactionPayload.s << std::endl;
     uint32_t dataParams = 123;
     char dataString[70]; 
     uint8_t rawdata[32] = {0xdb, 0x8a, 0x04, 0x22, 0x24, 0xc4, 0x4b, 0x05, 0xa9, 0x7e, 0x5f, 0x2a, 0x41, 0x0e, 0xa6, 0x04, 0xd8, 0x18, 0xbb, 0xe9, 0xe6, 0xa5, 0xd2, 0xbe, 0xed, 0x57, 0x78, 0xe7, 0x9e, 0xfd, 0x4a, 0xcf};
-    // uint8_t rawdata[32] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31};
        
     Util::BufToCharStr(dataString, rawdata, 32);
  
     std::cout << "BufToCharStr " << dataString << std::endl;
 
-    // char *cstr = new char[dataString.length() + 1];
-    // strcpy(cstr, dataString.c_str());
-    // uint8_t dest[32]; // = new uint8_t[dataString.length() + 1];
-   
-   
-   
-   
-    // HexStrToUchar(dest, &dataString[0], 32);
-    
-    // int k;
-    // for (k = 0; k<32; k++)
-    // {
-    //     std::cout << (uint32_t)dest[k] << ' ';
-    // }
-    // std::cout << std::endl;
-    uint8_t uintData[2] = {0xdb, 0x8a};
 
-    //std::string p2 = transaction.SetupContractData(&func, rawdata);
-    int32_t uint8Data = 0x77;
-
-    std::string payloadData = "db8a042224c44b05a97e5f2a410ea604d818bbe9e6a5d2beed5778e79efd4acf";
-    std::string r = "e9014ba4b484ee12141af45cdbd9641e2a053d4f69a103132fb440d27f572695";
-    std::string s = "0dbc83e447221890cbc667ce36f098bfd1bf1df83870236fd35d5317209a83e9";
-
-    std::string p2 = transaction.SetupContractData(&func, payloadData , uint8Data, r , s);
+    std::string p2 = transaction.SetupContractData(&func, payloadData , ID, transactionPayload.r, transactionPayload.s);
 
     std::cout << "Contract " << p2 << std::endl;
-
-    std::string p = "0x6d4ce63c";
 
     std::string result = transaction.SendTransaction(nonceVal, gasPriceVal, gasLimitVal, &toStr, &valueStr, &p2);
 
     std::cout << "To send : " << result << std::endl;
 
-    // testFunction(&valueStr);
-
-    // std::vector<uint8_t> encoded = contract.RlpEncode_v2(nonceVal, gasPriceVal, gasLimitVal, &toStr, &valueStr, &p);
-
-    //std::cout << encoded[0] << std::endl;
-
-    // int i;
-    // for(i=0; i<encoded.size(); i++)
-    // {
-    //     std::cout << (uint32_t) encoded[i] << std::endl;
-    // }
-    // std::cout << std::hex << uintToStr << std::endl;
 
     return 0;
 }
