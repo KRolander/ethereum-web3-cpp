@@ -6,14 +6,14 @@ var Eth = require('web3-eth');
 
 const web3 = new Web3(new Web3.providers.HttpProvider('http://127.0.0.1:7545'))
 
-const pricateKeyStr = 'b37bedd521a67af5cdce434ec9177e2931d82ff92427386d8e8fc8e363d780a4'
+const pricateKeyStr = 'b91d99a6c8027f9e68795168570965f5991fc7cf3a2543e484e61cb2ee3cf693'
 const privateKey = Buffer.from(pricateKeyStr, 'hex')
 
-const from = '0x51Cf24e50282CD6168916De6a8A24c3D4Eb74598'
+const from = '0xC229738aa9E76A10a74854110d40f27A579BC004'
 
-web3.eth.defaultAccount =  '0x51Cf24e50282CD6168916De6a8A24c3D4Eb74598'
+web3.eth.defaultAccount =  '0xC229738aa9E76A10a74854110d40f27A579BC004'
 
-const contractAddress = '0x9d98513642716eA671f2b66cA4b5ad0625308eeE' //'0x44b72e86bc2dA10BaaDFA6571c3B044dABeb0769' // 
+const contractAddress = '0xebc4D4daAc04324f710Eb33Ab80d395332086Cdf' //'0x44b72e86bc2dA10BaaDFA6571c3B044dABeb0769' // 
 
 
 
@@ -170,11 +170,13 @@ console.log('Smart Contract Payload', SmartContractPayload)
 
 
 
+const txCount = web3.eth.getTransactionCount(from)
+console.log('txCount : ', txCount)
 
 
 
 const txObject = {
-    nonce: '0x2',
+    nonce: txCount,
     from: from,
     gasPrice: '0x4A817C800', //'0x4A817C801',
     gas: '0x6691B7', 
