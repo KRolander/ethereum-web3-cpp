@@ -177,16 +177,38 @@ string Transaction::SetupContractData(const string *func, ...)
                 // Get data (uint8_t[]) array
                 uint8_t *data = va_arg(args, uint8_t *);
 
-                string output;
+                string zeros = "00000000000000000000000000000000000000000000000000000000000000";
+
+                //string output;
+
+                char charData[numbOfTabElements*2 + 1];
+                Util::bytes2hex(data, charData, numbOfTabElements);
+                std::string tmpData(charData);
+
+
+                int k;
+                for(k=0; k<numbOfTabElements*2 - 1; k+=2)
+                    ret = ret + zeros + tmpData[k] + tmpData[k+1];
+
+                // int k;
+                // for(k=0; k<numbOfTabElements*2 - 1; k+=2)
+                //    std::cout << charData[k] << " " << charData[k+1] << " ";
+                // std::cout << std::endl;
+
 
                 // Iterate on the array's elements -> convert uint to hex bytes to finally obtain hex string
-                for (int i = 0; i < numbOfTabElements; i++)
-                {
-                    // std::cout << " data[" << i << "] = " << (uint32_t)data[i] << std::endl;
-                    uint32_t tmpData = (uint32_t)data[i];
-                    output = output + GenerateBytesForUint(tmpData);
-                }
-                ret = ret + output;
+                // for (int i = 0; i < numbOfTabElements; i++)
+                // {
+                //     // std::cout << " data[" << i << "] = " << (uint32_t)data[i] << std::endl;
+                //     uint32_t tmpData = (uint32_t)data[i];
+                //     output = output + GenerateBytesForUint(tmpData);
+              
+              
+                // // }
+                
+
+
+               // ret = ret + output;
                 std::cout << " Overall data : " << ret << std::endl;
             }
             else if((strncmp(params[i].c_str(), "uint8", 5 /*sizeof("uint")*/) == 0) && (strncmp(params[i].c_str(), "uint8[", 6 /*sizeof("uint")*/) != 0) && (strncmp(params[i].c_str(), "uint8[]", 7 /*sizeof("uint")*/) != 0) )
@@ -648,7 +670,6 @@ string Transaction::GenerateBytesForString(const string *value)
 
     std::string strValue = value[0];
     uint32_t n = strValue.length();
-    std::cout << "****** GenerateBytesForString : " << strValue  << " Length : " << n << std::endl;
 
     char charValue[n+1];
     strcpy(charValue, strValue.c_str());
@@ -659,25 +680,20 @@ string Transaction::GenerateBytesForString(const string *value)
 
     int i;
     for(i=0; i<n; i++){
-        int digits = sprintf(dummy, "%x", (uint32_t) charValue[i]); 
+        int digits = sprintf(dummy, "%x", (uint32_t) charValue[i]);  // Get the utf-8 hex value of the string
         tmpOut = tmpOut + std::string(dummy);
     }
    
     
     std::string numOfChar = GenerateBytesForUint(n);
    
-    std::string prefix = "0000000000000000000000000000000000000000000000000000000000000020";
+    std::string prefix = "0000000000000000000000000000000000000000000000000000000000000020"; // string type prefix
     string zeros = "";
 
     for(i=0; i<(32-n); i++)
-        zeros = zeros + "00";
+        zeros = zeros + "00"; // zero pending to right
 
-
-    std::cout << " HERE " << prefix + numOfChar + tmpOut + zeros << std::endl;
-
-
-
-    return *value + zeros;
+    return prefix + numOfChar + tmpOut + zeros;
 }
 
 string Transaction::GenerateBytesForBytes(const char *value, const int len)
