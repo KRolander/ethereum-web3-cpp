@@ -140,9 +140,9 @@ string Transaction::SetupContractData(const string *func, ...)
     for (int i = 0; i < paramCount; ++i)
     {
         std::cout << "params[0].c_str() " << params[0].c_str() << std::endl;
-        std::cout << "params[1].c_str() " << params[1].c_str() << std::endl;
-        std::cout << "params[2].c_str() " << params[2].c_str() << std::endl;
-        std::cout << "params[3].c_str() " << params[3].c_str() << std::endl;
+        // std::cout << "params[1].c_str() " << params[1].c_str() << std::endl;
+        // std::cout << "params[2].c_str() " << params[2].c_str() << std::endl;
+        // std::cout << "params[3].c_str() " << params[3].c_str() << std::endl;
 
         // if (strncmp(params[0].c_str(), "uint256", 7 /*sizeof("bytes")*/) == 0)
         // {
@@ -647,57 +647,35 @@ string Transaction::GenerateBytesForString(const string *value)
 {
 
     std::string strValue = value[0];
-    std::cout << "GenerateBytesForString : " << strValue << std::endl;
-    int n = strValue.length();
-    char charValue[n + 1];
+    uint32_t n = strValue.length();
+    std::cout << "****** GenerateBytesForString : " << strValue  << " Length : " << n << std::endl;
+
+    char charValue[n+1];
     strcpy(charValue, strValue.c_str());
+   
+    char dummy[2];
 
-    //     uint8_t * uintVal = new uint8_t[strValue.size()];
+    std::string tmpOut;
 
-    //    std::string test = value[0];
-    //    std::ostringstream result;
-    //    result << std::setw(2) << std::setfill('0') << std::hex << std::uppercase;
-    //    std::copy(test.begin(), test.end(), std::ostream_iterator<unsigned int>(result, " "));
-    //    std::cout << test << ":" << result.str() << std::endl;
-
-    //     std::string strValueNew = result.str();
-    //     std::cout << " GenerateBytesForString : " << strValueNew << std::endl;
-
-    std::cout << " GenerateBytesForString : " << std::endl;
-    int len = strValue.length();
-    char hex_str[len + 1];
-
-    convert_hexa(charValue, hex_str);
-    std::string hexValue(hex_str);
-    std::cout << hexValue << std::endl;
-
-    // vector<uint8_t> vectorVal = Util::ConvertStringToVector(value);
-    // int i;
-    // for(i=0; i<value->size()/2; i++)
-    // {
-    //     std::cout << vectorVal[i] << ' ' << std::endl;
-    // }
-    // std::cout << std::endl;
-
-    // int i;
-    // for(i=0; i<strValue.size(); i++)
-    // {
-    //     const char c = strValue[i];
-    //     uintVal[i] = (uint8_t) atoi(&c);
-    //     std::cout << uintVal[i];
-    // }
-    // std::cout << std::endl;
-
-    // std::string strValueNew = UcharToHexStr(uintVal, strValue.size()/2);
-    // std::cout << " GenerateBytesForString : " << strValueNew << std::endl;
-
+    int i;
+    for(i=0; i<n; i++){
+        int digits = sprintf(dummy, "%x", (uint32_t) charValue[i]); 
+        tmpOut = tmpOut + std::string(dummy);
+    }
+   
+    
+    std::string numOfChar = GenerateBytesForUint(n);
+   
+    std::string prefix = "0000000000000000000000000000000000000000000000000000000000000020";
     string zeros = "";
 
-    size_t remain = 32 - ((value->size() - 2) % 32);
-    for (int i = 0; i < remain + 32; i++)
-    {
-        zeros = zeros + "0";
-    }
+    for(i=0; i<(32-n); i++)
+        zeros = zeros + "00";
+
+
+    std::cout << " HERE " << prefix + numOfChar + tmpOut + zeros << std::endl;
+
+
 
     return *value + zeros;
 }
