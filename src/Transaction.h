@@ -20,6 +20,11 @@
 #include "Util.h"
 
 
+#include "crypto/ecdsa.h"
+#include "crypto/secp256k1.h"
+#include "crypto/bignum.h"
+
+
 using namespace std;
 
 class Transaction {
@@ -47,6 +52,8 @@ public:
     void HexStrToUchar(unsigned char *dest, const char *source, int bytes_n);
     int chhex(char ch);
     void Sign(uint8_t* hash, uint8_t* sig, int* recid);
+    void SignTresor(uint8_t* hash, uint8_t* sig, int* recid);
+    void hexStringToUint8_t(uint8_t*dest, const char *source, int bytes_n);
 private:
     // Log Debug;
     // #define LOG(x) Debug.println(x)

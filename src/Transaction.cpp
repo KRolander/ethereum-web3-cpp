@@ -28,6 +28,8 @@
 #include "secp256k1/include/secp256k1_recovery.h"
 #include "secp256k1/src/secp256k1_c.h"
 #include "secp256k1/src/module/recovery/main_impl.h"
+/////////
+
 
 #define SIGNATURE_LENGTH 64
 #define SHA3_256_DIGEST_LENGTH 32
@@ -47,7 +49,7 @@ Transaction::Transaction(Web3 *_web3, const string *address)
     strcpy(options.to, "");
     strcpy(options.gasPrice, "0");
 
-    ctx = secp256k1_context_create(SECP256K1_CONTEXT_SIGN);
+    // ctx = secp256k1_context_create(SECP256K1_CONTEXT_SIGN);
 }
 
 // A simple atoi() function
@@ -410,6 +412,200 @@ std::string UcharToHexStr(unsigned char *data, int len) //bytes to string
     return ss.str();
 }
 
+
+
+void Transaction::hexStringToUint8_t(uint8_t*dest, const char *source, int bytes_n){
+
+    int i;
+    int j=0;
+    for(i=0; i<bytes_n; i++)
+    {
+        if(source[j] == '0')
+        {
+            dest[i] = 0; //0x00
+        }
+        else if(source[j] == '1')
+        {
+            dest[i] = 16; // 0x10
+        }
+        else if(source[j] == '2')
+        {
+            dest[i] = 32; // 0x20
+        }
+        else if(source[j] == '3')
+        {
+            dest[i] = 48; // 0x30
+        }
+        else if(source[j] == '4')
+        {
+            dest[i] = 64; // 0x40
+        }
+        else if(source[j] == '5')
+        {
+            dest[i] = 80; // 0x50
+        }
+        else if(source[j] == '6')
+        {
+            dest[i] = 96; // 0x60
+        }
+        else if(source[j] == '7')
+        {
+            dest[i] = 112; // 0x70
+        }
+        else if(source[j] == '8')
+        {
+            dest[i] = 128; // 0x80
+        }
+        else if(source[j] == '9')
+        {
+            dest[i] = 144; // 0x90
+        }
+        else if(source[j] == 'a')
+        {
+            dest[i] = 160; // 0xa0
+        }
+        else if(source[j] == 'b')
+        {
+            dest[i] = 176; // 0xb0
+        }
+        else if(source[j] == 'c')
+        {
+            dest[i] = 192; // 0xc0
+        }
+        else if(source[j] == 'd')
+        {
+            dest[i] = 208; // 0xd0
+        }
+        else if(source[j] == 'e')
+        {
+            dest[i] = 224; // 0xe0
+        }
+        else if(source[j] == 'f')
+        {
+            dest[i] = 240; // 0xf0
+        }
+         else if(source[j] == 'A')
+        {
+            dest[i] = 160; // 0xa0
+        }
+        else if(source[j] == 'B')
+        {
+            dest[i] = 176; // 0xb0
+        }
+        else if(source[j] == 'C')
+        {
+            dest[i] = 192; // 0xc0
+        }
+        else if(source[j] == 'D')
+        {
+            dest[i] = 208; // 0xd0
+        }
+        else if(source[j] == 'E')
+        {
+            dest[i] = 224; // 0xe0
+        }
+        else if(source[j] == 'F')
+        {
+            dest[i] = 240; // 0xf0
+        }
+
+        j++;
+
+        if(source[j] == '0')
+        {
+            dest[i] = (dest[i] | 0x00);
+        }
+        else if(source[j] == '1')
+        {
+            dest[i] = (dest[i] | 0x01);
+        }
+        else if(source[j] == '2')
+        {
+            dest[i] = (dest[i] | 0x02);
+        }
+        else if(source[j] == '3')
+        {
+            dest[i] = (dest[i] | 0x03);
+        }
+        else if(source[j] == '4')
+        {
+            dest[i] = (dest[i] | 0x04);
+        }
+        else if(source[j] == '5')
+        {
+            dest[i] = (dest[i] | 0x05);
+        }
+        else if(source[j] == '6')
+        {
+            dest[i] = (dest[i] | 0x06);
+        }
+        else if(source[j] == '7')
+        {
+            dest[i] = (dest[i] | 0x07);
+        }
+        else if(source[j] == '8')
+        {
+            dest[i] = (dest[i] | 0x08);
+        }
+        else if(source[j] == '9')
+        {
+            dest[i] = (dest[i] | 0x09);
+        }
+        else if(source[j] == 'a')
+        {
+            dest[i] = (dest[i] | 0x0a);
+        }
+        else if(source[j] == 'b')
+        {
+            dest[i] = (dest[i] | 0x0b);
+        }
+        else if(source[j] == 'c')
+        {
+            dest[i] = (dest[i] | 0x0c);
+        }
+        else if(source[j] == 'd')
+        {
+            dest[i] = (dest[i] | 0x0d);
+        }
+        else if(source[j] == 'e')
+        {
+            dest[i] = (dest[i] | 0x0e);
+        }
+        else if(source[j] == 'f')
+        {
+            dest[i] = (dest[i] | 0x0f);
+        }
+         else if(source[j] == 'A')
+        {
+            dest[i] = (dest[i] | 0x0a);
+        }
+        else if(source[j] == 'B')
+        {
+            dest[i] = (dest[i] | 0x0b);
+        }
+        else if(source[j] == 'C')
+        {
+            dest[i] = (dest[i] | 0x0c);
+        }
+        else if(source[j] == 'D')
+        {
+            dest[i] = (dest[i] | 0x0d);
+        }
+        else if(source[j] == 'E')
+        {
+            dest[i] = (dest[i] | 0x0e);
+        }
+        else if(source[j] == 'F')
+        {
+            dest[i] = (dest[i] | 0x0f);
+        }
+
+        j++;
+    }
+}
+
+
+
 void Transaction::HexStrToUchar(unsigned char *dest, const char *source, int bytes_n)
 {
     for (bytes_n--; bytes_n >= 0; bytes_n--)
@@ -465,7 +661,7 @@ void Transaction::GenerateSignature(uint8_t *signature, int *recid, uint32_t non
     int toHashSize = t.size() / 2;
     uint8_t *toHash = new uint8_t[toHashSize];
 
-    HexStrToUchar(toHash, &t[0], toHashSize);
+    hexStringToUint8_t(toHash, &t[0], toHashSize);
 
     // std::cout << " toHash : " << std::endl;
 
@@ -489,28 +685,29 @@ void Transaction::GenerateSignature(uint8_t *signature, int *recid, uint32_t non
     //    HexStrToUchar(hash, &hashedStr[0], 32);
 
     // std::cout << "Sha3 : " << std::endl;
-
+    // int i;
     // for (i = 0; i < 32; i++)
     // {
     //     std::cout << (uint32_t)digest[i] << ' ';
     // }
     // std::cout << std::endl;
 
-    Sign((uint8_t *)digest, signature, recid);
-
-    // std::cout << "Signature" << std::endl;
-    // std::cout << "r : " << std::endl;
-    // for (i = 0; i < 32; i++)
-    // {
-    //     std::cout << (uint32_t)signature[i] << ' ';
-    // }
-    // std::cout << std::endl;
-    // std::cout << "s : " << std::endl;
-    // for (i = 32; i < 64; i++)
-    // {
-    //     std::cout << (uint32_t)signature[i] << ' ';
-    // }
-    // std::cout << std::endl;
+    // Sign((uint8_t *)digest, signature, recid);
+    SignTresor((uint8_t *)digest, signature, recid);
+    int i;
+    std::cout << "Signature" << std::endl;
+    std::cout << "r : " << std::endl;
+    for (i = 0; i < 32; i++)
+    {
+        std::cout << (uint32_t)signature[i] << ' ';
+    }
+    std::cout << std::endl;
+    std::cout << "s : " << std::endl;
+    for (i = 32; i < 64; i++)
+    {
+        std::cout << (uint32_t)signature[i] << ' ';
+    }
+    std::cout << std::endl;
 #if 0
     printf("\nhash_input : %s\n", tmp);
     printf("\nhash_output: %s\n", hashedStr);
@@ -544,7 +741,7 @@ string Transaction::GenerateContractBytes(const string *func)
     int toHashSize = in.size() / 2;
     uint8_t *toHash = new uint8_t[toHashSize];
 
-    HexStrToUchar(toHash, &in[0], toHashSize);
+    hexStringToUint8_t(toHash, &in[0], toHashSize);
     uint8_t digest[SHA3_256_DIGEST_LENGTH];
     // FIPS202_SHA3_256(toHash, toHashSize, digest);
 
@@ -836,6 +1033,8 @@ vector<uint8_t> Transaction::RlpEncode_v2(
 
 void Transaction::Sign(uint8_t *hash, uint8_t *sig, int *recid)
 {
+    ctx = secp256k1_context_create(SECP256K1_CONTEXT_SIGN);
+
     secp256k1_nonce_function noncefn = secp256k1_nonce_function_rfc6979;
     void *data_ = NULL;
 
@@ -865,6 +1064,17 @@ void Transaction::Sign(uint8_t *hash, uint8_t *sig, int *recid)
     }
 #endif
 }
+
+ void Transaction::SignTresor(uint8_t* hash, uint8_t* sig, int* recid){
+    const ecdsa_curve *curve = &secp256k1;
+        uint8_t py;
+
+
+        int ok = ecdsa_sign_digest(curve, privateKey, hash, sig, &py,  NULL);
+        
+        recid[0] = py; 
+ }
+
 
 vector<uint8_t> Transaction::RlpEncodeForRawTransaction(
     uint32_t nonceVal, uint64_t gasPriceVal, uint32_t gasLimitVal,
