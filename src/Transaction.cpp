@@ -51,49 +51,13 @@ Transaction::Transaction(Web3 *_web3, const string *address)
     // ctx = secp256k1_context_create(SECP256K1_CONTEXT_SIGN);
 }
 
-// A simple atoi() function
-int myAtoi(char *str)
-{
-    // Initialize result
-    int res = 0;
-
-    // Iterate through all characters
-    // of input string and update result
-    // take ASCII character of corosponding digit and
-    // subtract the code from '0' to get numerical
-    // value and multiply res by 10 to shuffle
-    // digits left to update running total
-    for (int i = 0; str[i] != '\0'; ++i)
-        res = res * 10 + str[i] - '0';
-
-    // return result.
-    return res;
-}
 
 void Transaction::SetPrivateKey(const uint8_t *key)
 {
     privateKey = key;
 }
 
-// --------------------------------------------
-// Development Status
-// supported types:
-//    uint<M>, (0<M<256, M%8=0)
-//    uint,  (=uint256)
-//    int<M>, (0<M<256, M%8=0)
-//    int,  (=int256)
-//    address,  (=uint160)
-//    bool,
-//    bytes<M> (0<M<=32)
-//    function, (=bytes24)
-//    string,
-// not supported yet:
-//    fixed<M>x<N>,
-//    ufixed<M>x<N>,
-//    <type>[M],
-//    bytes,
-//    <type>[],
-// --------------------------------------------
+
 string Transaction::SetupContractData(const string *func, ...)
 {
     string ret = "";
@@ -102,11 +66,6 @@ string Transaction::SetupContractData(const string *func, ...)
     string contractBytes = GenerateContractBytes(func);
     ret = contractBytes;
 
-#if 0
-    LOG("=SetupContractData::contractBytes=============");
-    LOG(contractBytes.c_str());
-    LOG("==============================================");
-#endif
 
     size_t paramCount = 0;
     vector<string> params;
@@ -371,11 +330,6 @@ string Transaction::SetupContractData(const string *func, ...)
     va_end(args);
     // std::cout << "Here" << std::endl;
 
-#if 0
-    LOG("=SetupContractData::ret=============");
-    LOG(ret.c_str());
-    LOG("====================================");
-#endif
 
     return ret;
 }
@@ -385,13 +339,7 @@ string Transaction::Call(const string *param)
     const string from = string(options.from);
     const long gasPrice = strtol(options.gasPrice, nullptr, 10);
     const string value = "";
-#if 0
-    printf("from: %s\n", from.c_str());
-    printf("to: %s\n", contractAddress->c_str());
-    printf("value: %s\n", value.c_str());
-    printf("data: %s\n", param->c_str());
-    printf(param->c_str());
-#endif
+
     string result = web3->EthCall(&from, contractAddress, options.gas, gasPrice, &value, param);
     return result;
 }
@@ -400,10 +348,6 @@ string Transaction::SendTransaction(uint32_t nonceVal, uint64_t gasPriceVal, uin
                                     string *toStr, string *valueStr, string *dataStr)
 {
 
-    // std::cout << " Params : " << std::endl;
-    // std::cout << "toStr " << toStr[0] << std::endl;
-    // std::cout << "valueStr " << valueStr[0] << std::endl;
-    // std::cout << "dataStr " << dataStr[0] << std::endl;
 
     uint8_t signature[SIGNATURE_LENGTH];
     memset(signature, 0, SIGNATURE_LENGTH);
@@ -425,15 +369,7 @@ string Transaction::SendTransaction(uint32_t nonceVal, uint64_t gasPriceVal, uin
     paramStr = paramStr + param_hex;
 
     // std::cout << "Param to send : " << paramStr << std::endl;
-#if 0
-    printf("\nGenerated Transaction--------\n ");
-    printf("len:%d\n", (int)param.size());
-    for (int i = 0; i<param.size(); i++) {
-        printf("%02x ", param[i]);
-    }
-    printf("\nparamStr: %s\n", paramStr.c_str());
-    printf("\n\n");
-#endif
+
 
     return web3->EthSendSignedTransaction(&paramStr, param.size());
 }
@@ -444,11 +380,6 @@ string Transaction::SendTransaction(uint32_t nonceVal, uint64_t gasPriceVal, uin
 
 std::string UcharToHexStr(unsigned char *data, int len) //bytes to string
 {
-    //this was first:
-    // std::stringstream ss;
-    // for (int i = 0; i < data_length; ++i)
-    //     ss << std::hex << (int)data[i];
-    // std::string mystr = ss.str();
 
     //the following is better: IT FILLS WITH 0 !!!!
     std::stringstream ss;
@@ -670,10 +601,6 @@ void Transaction::GenerateSignature(uint8_t *signature, int *recid, uint32_t non
 
     vector<uint8_t> encoded = RlpEncode(nonceVal, gasPriceVal, gasLimitVal, toStr, valueStr, dataStr);
 
-    // hash
-    // string t =  Util::VectorToString(encoded); Modified 19/02/2021
-
-    // std::cout << " ######### Rlp encoded " << t <<  std::endl;
 
     char t_c[encoded.size() * 2 + 1]; // 32 * 2 + 1
     Util::bytes2hex(&encoded[0], t_c, encoded.size());
@@ -683,19 +610,7 @@ void Transaction::GenerateSignature(uint8_t *signature, int *recid, uint32_t non
 
     t = t + t_hex;
 
-    // std::cout << " ######### Rlp encoded alternative " << t <<  std::endl;
-
-    // TODO:
-
-    // string hashedStr = web3->Web3Sha3(&t);
     std::cout << " TODO Sha3 in GenerateSignature" << std::endl;
-    string hashedStr = "db8a042224c44b05a97e5f2a410ea604d818bbe9e6a5d2beed5778e79efd4acf";
-    // sign
-
-    // TODO:
-    // char hash[hashedStr.size()];
-    // memset(hash, 0, sizeof(hash));
-    // Util::ConvertCharStrToUintArray((uint8_t*)hash, (uint8_t*)hashedStr.c_str());
 
     t.erase(0, 2); // remove '0x'
 
@@ -706,34 +621,11 @@ void Transaction::GenerateSignature(uint8_t *signature, int *recid, uint32_t non
 
     hexStringToUint8_t(toHash, &t[0], toHashSize);
 
-    // std::cout << " toHash : " << std::endl;
-
-    // int i;
-    // for (i = 0; i < toHashSize; i++)
-    // {
-    //     std::cout << (uint32_t)toHash[i] << ' ';
-    // }
-    // std::cout << std::endl;
 
     uint8_t digest[SHA3_256_DIGEST_LENGTH];
     // FIPS202_SHA3_256(toHash, toHashSize, digest);
 
     keccak_256(toHash, toHashSize, digest);
-
-    // Keccak(1088, 512, toHash, toHashSize, 0x01, digest, 32);
-
-    // sha3_256(toHash, toHashSize, digest);
-
-    //    uint8_t hash[32];
-    //    HexStrToUchar(hash, &hashedStr[0], 32);
-
-    // std::cout << "Sha3 : " << std::endl;
-    // int i;
-    // for (i = 0; i < 32; i++)
-    // {
-    //     std::cout << (uint32_t)digest[i] << ' ';
-    // }
-    // std::cout << std::endl;
 
     // Sign((uint8_t *)digest, signature, recid);
     SignTresor((uint8_t *)digest, signature, recid);
@@ -887,10 +779,7 @@ vector<uint8_t> Transaction::RlpEncode(
 
     std::vector<uint8_t> data = Util::ConvertStringToVector(dataStr);
 
-    // std::vector<uint8_t> data(200);
-    // data = Util::ConvertStringToVector(dataStr);
 
-    // Until here it seems ok
     std::cout << "ValueStr : " << valueStr[0] << std::endl;
 
     std::cout << "Value in bytes  : " << std::endl;
@@ -906,26 +795,7 @@ vector<uint8_t> Transaction::RlpEncode(
     vector<uint8_t> outputTo = Util::RlpEncodeItemWithVector(to);
     vector<uint8_t> outputValue = Util::RlpEncodeItemWithVector(value);
 
-    // std::cout << "Value in rlp  : " << std::endl;
-
-    // for (std::vector<uint8_t>::const_iterator i = outputValue.begin(); i != outputValue.end(); ++i)
-    //     std::cout << (uint32_t)*i << ' ';
-
-    // std::cout << std::endl;
-
-    // std::string valuerOutStr = Util::VectorToString(outputValue);
-    // std::cout << " valuerOutStr " << valuerOutStr << std::endl;
-
     vector<uint8_t> outputData = Util::RlpEncodeItemWithVector(data);
-
-    // add prefix 0x1c8080
-
-    // Prefix
-    // vector<uint8_t> prefix;
-    // prefix.push_back(0x1c);
-    // prefix.push_back(0x80);
-    // prefix.push_back(0x80);
-
     vector<uint8_t> encoded = Util::RlpEncodeWholeHeaderWithVector(
         outputNonce.size() +
         outputGasPrice.size() +
@@ -941,21 +811,7 @@ vector<uint8_t> Transaction::RlpEncode(
     encoded.insert(encoded.end(), outputTo.begin(), outputTo.end());
     encoded.insert(encoded.end(), outputValue.begin(), outputValue.end());
     encoded.insert(encoded.end(), outputData.begin(), outputData.end());
-    // encoded.insert(encoded.end(), prefix.begin(), prefix.end());
-
-    // char test[MAX_SIZE];
-    // Util::VectorToCharStr(test, encoded);
-
-    // std::cout << "Test to : " << test << std::endl;
-
-#if 0
-    printf("\nRLP encoded--------\n ");
-    printf("\nlength : %d\n", p);
-    for (int i = 0; i<p; i++) {
-        printf("%02x ", i, encoded[i]);
-    }
-#endif
-
+   
     return encoded;
 }
 
@@ -992,14 +848,6 @@ vector<uint8_t> Transaction::RlpEncode_v2(
     encoded.insert(encoded.end(), outputValue.begin(), outputValue.end());
     encoded.insert(encoded.end(), outputData.begin(), outputData.end());
 
-#if 0
-    printf("\nRLP encoded--------\n ");
-    printf("\nlength : %d\n", p);
-    for (int i = 0; i<p; i++) {
-        printf("%02x ", i, encoded[i]);
-    }
-#endif
-
     return encoded;
 }
 
@@ -1020,21 +868,6 @@ void Transaction::Sign(uint8_t *hash, uint8_t *sig, int *recid)
     }
 
     secp256k1_ecdsa_recoverable_signature_serialize_compact(ctx, &sig[0], &recid[0], &signature);
-
-#if 0
-    printf("\nhash--------\n ");
-    for (int i = 0; i<32; i++) {
-        printf("%02x ", hash[i]);
-    }
-    printf("\npriv--------\n ");
-    for (int i = 0; i<32; i++) {
-        printf("%02x ", privateKey[i]);
-    }
-    printf("\nsignature--------\n ");
-    for (int i = 0; i<64; i++) {
-        printf("%02x ", sig[i]);
-    }
-#endif
 }
 
 void Transaction::SignTresor(uint8_t *hash, uint8_t *sig, int *recid)
@@ -1059,10 +892,7 @@ vector<uint8_t> Transaction::RlpEncodeForRawTransaction(
     }
     vector<uint8_t> nonce = Util::ConvertNumberToVector(nonceVal);
 
-    int64_t gPv = 0x4A817C800; //20000000000;
     vector<uint8_t> gasPrice = Util::ConvertNumberToVector64(gasPriceVal);
-
-    // vector<uint8_t> gasPrice = Util::ConvertNumberToVector(gasPriceVal);
 
     vector<uint8_t> gasLimit = Util::ConvertNumberToVector(gasLimitVal);
     vector<uint8_t> to = Util::ConvertStringToVector(toStr);
@@ -1085,28 +915,6 @@ vector<uint8_t> Transaction::RlpEncodeForRawTransaction(
     vector<uint8_t> outputR = Util::RlpEncodeItemWithVector(R);
     vector<uint8_t> outputS = Util::RlpEncodeItemWithVector(S);
     vector<uint8_t> outputV = Util::RlpEncodeItemWithVector(V);
-
-#if 0
-    printf("\noutputNonce--------\n ");
-    for (int i = 0; i<outputNonce.size(); i++) { printf("%02x ", outputNonce[i]); }
-    printf("\noutputGasPrice--------\n ");
-    for (int i = 0; i<outputGasPrice.size(); i++) {printf("%02x ", outputGasPrice[i]); }
-    printf("\noutputGasLimit--------\n ");
-    for (int i = 0; i<outputGasLimit.size(); i++) {printf("%02x ", outputGasLimit[i]); }
-    printf("\noutputTo--------\n ");
-    for (int i = 0; i<outputTo.size(); i++) {printf("%02x ", outputTo[i]); }
-    printf("\noutputValue--------\n ");
-    for (int i = 0; i<outputValue.size(); i++) { printf("%02x ", outputValue[i]); }
-    printf("\noutputData--------\n ");
-    for (int i = 0; i<outputData.size(); i++) { printf("%02x ", outputData[i]); }
-    printf("\nR--------\n ");
-    for (int i = 0; i<outputR.size(); i++) { printf("%02x ", outputR[i]); }
-    printf("\nS--------\n ");
-    for (int i = 0; i<outputS.size(); i++) { printf("%02x ", outputS[i]); }
-    printf("\nV--------\n ");
-    for (int i = 0; i<outputV.size(); i++) { printf("%02x ", outputV[i]); }
-    printf("\n");
-#endif
 
     vector<uint8_t> encoded = Util::RlpEncodeWholeHeaderWithVector(
         outputNonce.size() +
