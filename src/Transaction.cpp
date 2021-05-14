@@ -30,7 +30,6 @@
 #include "secp256k1/src/module/recovery/main_impl.h"
 /////////
 
-
 #define SIGNATURE_LENGTH 64
 #define SHA3_256_DIGEST_LENGTH 32
 
@@ -45,7 +44,7 @@ Transaction::Transaction(Web3 *_web3, const string *address)
     web3 = _web3;
     contractAddress = address;
     options.gas = 0;
-    strcpy(options.from, "0x51Cf24e50282CD6168916De6a8A24c3D4Eb74598");
+    strcpy(options.from, "0xC229738aa9E76A10a74854110d40f27A579BC004");
     strcpy(options.to, "");
     strcpy(options.gasPrice, "0");
 
@@ -183,68 +182,128 @@ string Transaction::SetupContractData(const string *func, ...)
 
                 //string output;
 
-                char charData[numbOfTabElements*2 + 1];
+                char charData[numbOfTabElements * 2 + 1];
                 Util::bytes2hex(data, charData, numbOfTabElements);
                 std::string tmpData(charData);
 
-
                 int k;
-                for(k=0; k<numbOfTabElements*2 - 1; k+=2)
-                    ret = ret + zeros + tmpData[k] + tmpData[k+1];
+                for (k = 0; k < numbOfTabElements * 2 - 1; k += 2)
+                    ret = ret + zeros + tmpData[k] + tmpData[k + 1];
 
-                // int k;
-                // for(k=0; k<numbOfTabElements*2 - 1; k+=2)
-                //    std::cout << charData[k] << " " << charData[k+1] << " ";
-                // std::cout << std::endl;
-
-
-                // Iterate on the array's elements -> convert uint to hex bytes to finally obtain hex string
-                // for (int i = 0; i < numbOfTabElements; i++)
-                // {
-                //     // std::cout << " data[" << i << "] = " << (uint32_t)data[i] << std::endl;
-                //     uint32_t tmpData = (uint32_t)data[i];
-                //     output = output + GenerateBytesForUint(tmpData);
-              
-              
-                // // }
-                
-
-
-               // ret = ret + output;
+                // ret = ret + output;
                 std::cout << " Overall data : " << ret << std::endl;
             }
-            else if((strncmp(params[i].c_str(), "uint8", 5 /*sizeof("uint")*/) == 0) && (strncmp(params[i].c_str(), "uint8[", 6 /*sizeof("uint")*/) != 0) && (strncmp(params[i].c_str(), "uint8[]", 7 /*sizeof("uint")*/) != 0) )
-            {   
+            else if ((strncmp(params[i].c_str(), "uint8", 5 /*sizeof("uint")*/) == 0) && (strncmp(params[i].c_str(), "uint8[", 6 /*sizeof("uint")*/) != 0) && (strncmp(params[i].c_str(), "uint8[]", 7 /*sizeof("uint")*/) != 0))
+            {
                 std::cout << "uint8 is detected" << std::endl;
-                string output = GenerateBytesForUint(va_arg(args, uint32_t));
+                // string output = GenerateBytesForUint(va_arg(args, uint32_t));
 
-                ret = ret + output;
+                uint8_t *data = va_arg(args, uint8_t *);
+                string zeros = "00000000000000000000000000000000000000000000000000000000000000";
+
+                char charData[3];
+                Util::bytes2hex(data, charData, 2);
+                std::string tmpData(charData);
+
+                ret = ret + zeros + tmpData[0] + tmpData[1];
             }
             else if (strncmp(params[i].c_str(), "uint8[]", 7 /*sizeof("uint")*/) == 0)
             {
 
                 std::cout << "###### Pleasse Precise length of the input array" << std::endl;
+            }
+            else if ((strncmp(params[i].c_str(), "uint16[", 7 /*sizeof("uint")*/) == 0) && (strncmp(params[i].c_str(), "uint16[]", 8 /*sizeof("uint")*/) != 0))
+            {
+
+                std::cout << "uint16[ is detected" << std::endl;
+
+                char *p2;
+                char tmp2[params[i].size()];
+                memset(tmp2, 0, sizeof(tmp2));
+                strcpy(tmp2, params[i].c_str());
+                strtok(tmp2, "[");
+                // p2 = strtok(NULL, "(");
+                // p2 = strtok(p2, ")");
+                // p2 = strtok(p2, ",");
+                p2 = strtok(NULL, "]");
+
+                int numbOfTabElements;
+                numbOfTabElements = std::atoi(p2);
+
                 // Get data (uint8_t[]) array
-                // uint8_t *data = va_arg(args, uint8_t *);
-                // uint32_t numbOfTabElements = sizeof(data) / sizeof(uint8_t);
+                uint16_t *data = va_arg(args, uint16_t *);
 
-                //
-                // std::cout << "######### number of element : " << numbOfTabElements << std::endl;
+                std::string zeros = "000000000000000000000000000000000000000000000000000000000000";
 
-                // // Prefix indicating that we want to send an uint8_t array
-                // char prefix[65] = {'0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '2', '0'};
+                char charData[numbOfTabElements * 4 + 1];
+                Util::doubleBytes2hex(data, charData, numbOfTabElements * 4);
+                std::string tmpData(charData);
 
-                // string output(prefix);
-                // output = output + GenerateBytesForUint(numbOfTabElements);
+                int k;
+                for (k = 0; k < numbOfTabElements * 4 - 1; k += 4)
+                    ret = ret + zeros + tmpData[k] + tmpData[k + 1] + tmpData[k + 2] + tmpData[k + 3];
+            }
+            else if ((strncmp(params[i].c_str(), "uint16", 6 /*sizeof("uint")*/) == 0) && (strncmp(params[i].c_str(), "uint16[", 7 /*sizeof("uint")*/) != 0) && (strncmp(params[i].c_str(), "uint16[]", 8 /*sizeof("uint")*/) != 0))
+            {
+                uint16_t *data = va_arg(args, uint16_t *);
 
-                // for (int i = 0; i < numbOfTabElements; i++)
-                // {
-                //     // std::cout << " data[" << i << "] = " << (uint32_t)data[i] << std::endl;
-                //     uint32_t tmpData = (uint32_t) data[i];
-                //     output = output + GenerateBytesForUint(tmpData);
-                // }
-                // ret = ret + output;
-                // std::cout << " Overall data : " << ret << std::endl;
+                std::string zeros = "000000000000000000000000000000000000000000000000000000000000";
+                char charData[5];
+                Util::doubleBytes2hex(data, charData, 4);
+                std::string tmpData(charData);
+
+                ret = ret + zeros + tmpData[0] + tmpData[1] + tmpData[2] + tmpData[3];
+            }
+            else if (strncmp(params[i].c_str(), "uint16[]", 8 /*sizeof("uint")*/) == 0)
+            {
+                std::cout << "###### Pleasse Precise length of the input array" << std::endl;
+            }
+            else if ((strncmp(params[i].c_str(), "uint32[", 7 /*sizeof("uint")*/) == 0) && (strncmp(params[i].c_str(), "uint32[]", 8 /*sizeof("uint")*/) != 0))
+            {
+                std::cout << "uint32[ is detected" << std::endl;
+
+                char *p2;
+                char tmp2[params[i].size()];
+                memset(tmp2, 0, sizeof(tmp2));
+                strcpy(tmp2, params[i].c_str());
+                strtok(tmp2, "[");
+                // p2 = strtok(NULL, "(");
+                // p2 = strtok(p2, ")");
+                // p2 = strtok(p2, ",");
+                p2 = strtok(NULL, "]");
+
+                int numbOfTabElements;
+                numbOfTabElements = std::atoi(p2);
+
+                // Get data (uint8_t[]) array
+                uint32_t *data = va_arg(args, uint32_t *);
+
+                std::string zeros = "00000000000000000000000000000000000000000000000000000000";
+
+                char charData[numbOfTabElements * 8 + 1];
+                Util::quarteBytes2hex(data,charData, numbOfTabElements * 8);
+                std::string tmpData(charData);
+
+                int k;
+                for (k = 0; k < numbOfTabElements * 8 - 1; k += 8)
+                    ret = ret + zeros + tmpData[k] + tmpData[k + 1] + tmpData[k + 2] + tmpData[k + 3] + tmpData[k + 4] + tmpData[k + 5] + tmpData[k + 6] + tmpData[k + 7];
+
+            }
+            else if((strncmp(params[i].c_str(), "uint32", 6 /*sizeof("uint")*/) == 0) && (strncmp(params[i].c_str(), "uint32[", 7 /*sizeof("uint")*/) != 0) && (strncmp(params[i].c_str(), "uint32[]", 8 /*sizeof("uint")*/) != 0))
+            {
+                uint32_t *data = va_arg(args, uint32_t *);
+
+                std::string zeros = "00000000000000000000000000000000000000000000000000000000";
+                char charData[9];
+                Util::quarteBytes2hex(data,charData,8);
+                std::string tmpData(charData);
+
+                ret = ret + zeros + tmpData[0] + tmpData[1] + tmpData[2] + tmpData[3] + tmpData[4] + tmpData[5] + tmpData[6] + tmpData[7]; 
+    
+            }
+            else if (strncmp(params[i].c_str(), "uint32[]", 8 /*sizeof("uint")*/) == 0)
+            {
+                std::cout << "###### Pleasse Precise length of the input array" << std::endl;
             }
             // uint256 is already a hex string so nothing to do
             else if (strncmp(params[i].c_str(), "uint256", 7 /*sizeof("uint")*/) == 0)
@@ -259,17 +318,6 @@ string Transaction::SetupContractData(const string *func, ...)
 
                 ret = ret + output;
             }
-        }
-        else if (strncmp(params[i].c_str(), "int", sizeof("int")) == 0 || strncmp(params[i].c_str(), "bool", sizeof("bool")) == 0)
-        {
-            string output = GenerateBytesForInt(va_arg(args, int32_t));
-            ret = ret + string(output);
-            std::cout << " => => => => " << ret << std::endl;
-        }
-        else if (strncmp(params[i].c_str(), "address", sizeof("address")) == 0)
-        {
-            string output = GenerateBytesForAddress(va_arg(args, string *));
-            ret = ret + string(output);
         }
         else if (strncmp(params[i].c_str(), "string", sizeof("string")) == 0)
         {
@@ -412,190 +460,189 @@ std::string UcharToHexStr(unsigned char *data, int len) //bytes to string
     return ss.str();
 }
 
-
-
-void Transaction::hexStringToUint8_t(uint8_t*dest, const char *source, int bytes_n){
+void Transaction::hexStringToUint8_t(uint8_t *dest, const char *source, int bytes_n)
+{
 
     int i;
-    int j=0;
-    for(i=0; i<bytes_n; i++)
+    int j = 0;
+    for (i = 0; i < bytes_n; i++)
     {
-        if(source[j] == '0')
+        if (source[j] == '0')
         {
             dest[i] = 0; //0x00
         }
-        else if(source[j] == '1')
+        else if (source[j] == '1')
         {
             dest[i] = 16; // 0x10
         }
-        else if(source[j] == '2')
+        else if (source[j] == '2')
         {
             dest[i] = 32; // 0x20
         }
-        else if(source[j] == '3')
+        else if (source[j] == '3')
         {
             dest[i] = 48; // 0x30
         }
-        else if(source[j] == '4')
+        else if (source[j] == '4')
         {
             dest[i] = 64; // 0x40
         }
-        else if(source[j] == '5')
+        else if (source[j] == '5')
         {
             dest[i] = 80; // 0x50
         }
-        else if(source[j] == '6')
+        else if (source[j] == '6')
         {
             dest[i] = 96; // 0x60
         }
-        else if(source[j] == '7')
+        else if (source[j] == '7')
         {
             dest[i] = 112; // 0x70
         }
-        else if(source[j] == '8')
+        else if (source[j] == '8')
         {
             dest[i] = 128; // 0x80
         }
-        else if(source[j] == '9')
+        else if (source[j] == '9')
         {
             dest[i] = 144; // 0x90
         }
-        else if(source[j] == 'a')
+        else if (source[j] == 'a')
         {
             dest[i] = 160; // 0xa0
         }
-        else if(source[j] == 'b')
+        else if (source[j] == 'b')
         {
             dest[i] = 176; // 0xb0
         }
-        else if(source[j] == 'c')
+        else if (source[j] == 'c')
         {
             dest[i] = 192; // 0xc0
         }
-        else if(source[j] == 'd')
+        else if (source[j] == 'd')
         {
             dest[i] = 208; // 0xd0
         }
-        else if(source[j] == 'e')
+        else if (source[j] == 'e')
         {
             dest[i] = 224; // 0xe0
         }
-        else if(source[j] == 'f')
+        else if (source[j] == 'f')
         {
             dest[i] = 240; // 0xf0
         }
-         else if(source[j] == 'A')
+        else if (source[j] == 'A')
         {
             dest[i] = 160; // 0xa0
         }
-        else if(source[j] == 'B')
+        else if (source[j] == 'B')
         {
             dest[i] = 176; // 0xb0
         }
-        else if(source[j] == 'C')
+        else if (source[j] == 'C')
         {
             dest[i] = 192; // 0xc0
         }
-        else if(source[j] == 'D')
+        else if (source[j] == 'D')
         {
             dest[i] = 208; // 0xd0
         }
-        else if(source[j] == 'E')
+        else if (source[j] == 'E')
         {
             dest[i] = 224; // 0xe0
         }
-        else if(source[j] == 'F')
+        else if (source[j] == 'F')
         {
             dest[i] = 240; // 0xf0
         }
 
         j++;
 
-        if(source[j] == '0')
+        if (source[j] == '0')
         {
             dest[i] = (dest[i] | 0x00);
         }
-        else if(source[j] == '1')
+        else if (source[j] == '1')
         {
             dest[i] = (dest[i] | 0x01);
         }
-        else if(source[j] == '2')
+        else if (source[j] == '2')
         {
             dest[i] = (dest[i] | 0x02);
         }
-        else if(source[j] == '3')
+        else if (source[j] == '3')
         {
             dest[i] = (dest[i] | 0x03);
         }
-        else if(source[j] == '4')
+        else if (source[j] == '4')
         {
             dest[i] = (dest[i] | 0x04);
         }
-        else if(source[j] == '5')
+        else if (source[j] == '5')
         {
             dest[i] = (dest[i] | 0x05);
         }
-        else if(source[j] == '6')
+        else if (source[j] == '6')
         {
             dest[i] = (dest[i] | 0x06);
         }
-        else if(source[j] == '7')
+        else if (source[j] == '7')
         {
             dest[i] = (dest[i] | 0x07);
         }
-        else if(source[j] == '8')
+        else if (source[j] == '8')
         {
             dest[i] = (dest[i] | 0x08);
         }
-        else if(source[j] == '9')
+        else if (source[j] == '9')
         {
             dest[i] = (dest[i] | 0x09);
         }
-        else if(source[j] == 'a')
+        else if (source[j] == 'a')
         {
             dest[i] = (dest[i] | 0x0a);
         }
-        else if(source[j] == 'b')
+        else if (source[j] == 'b')
         {
             dest[i] = (dest[i] | 0x0b);
         }
-        else if(source[j] == 'c')
+        else if (source[j] == 'c')
         {
             dest[i] = (dest[i] | 0x0c);
         }
-        else if(source[j] == 'd')
+        else if (source[j] == 'd')
         {
             dest[i] = (dest[i] | 0x0d);
         }
-        else if(source[j] == 'e')
+        else if (source[j] == 'e')
         {
             dest[i] = (dest[i] | 0x0e);
         }
-        else if(source[j] == 'f')
+        else if (source[j] == 'f')
         {
             dest[i] = (dest[i] | 0x0f);
         }
-         else if(source[j] == 'A')
+        else if (source[j] == 'A')
         {
             dest[i] = (dest[i] | 0x0a);
         }
-        else if(source[j] == 'B')
+        else if (source[j] == 'B')
         {
             dest[i] = (dest[i] | 0x0b);
         }
-        else if(source[j] == 'C')
+        else if (source[j] == 'C')
         {
             dest[i] = (dest[i] | 0x0c);
         }
-        else if(source[j] == 'D')
+        else if (source[j] == 'D')
         {
             dest[i] = (dest[i] | 0x0d);
         }
-        else if(source[j] == 'E')
+        else if (source[j] == 'E')
         {
             dest[i] = (dest[i] | 0x0e);
         }
-        else if(source[j] == 'F')
+        else if (source[j] == 'F')
         {
             dest[i] = (dest[i] | 0x0f);
         }
@@ -603,8 +650,6 @@ void Transaction::hexStringToUint8_t(uint8_t*dest, const char *source, int bytes
         j++;
     }
 }
-
-
 
 void Transaction::HexStrToUchar(unsigned char *dest, const char *source, int bytes_n)
 {
@@ -807,87 +852,32 @@ string Transaction::GenerateBytesForUint(const uint32_t value)
     return string(output);
 }
 
-string Transaction::GenerateBytesForInt(const int32_t value)
-{
-    char output[70];
-    memset(output, 0, sizeof(output));
-
-    // check number of digits
-    char dummy[64];
-    int digits = sprintf(dummy, "%x", value);
-
-    // fill 0 and copy number to string
-    char fill[2];
-    if (value >= 0)
-    {
-        sprintf(fill, "%s", "0");
-    }
-    else
-    {
-        sprintf(fill, "%s", "f");
-    }
-    for (int i = 2; i < 2 + 64 - digits; i++)
-    {
-        sprintf(output, "%s%s", output, fill);
-    }
-    sprintf(output, "%s%x", output, value);
-    return string(output);
-}
-
-string Transaction::GenerateBytesForAddress(const string *value)
-{
-    size_t digits = value->size() - 2;
-
-    string zeros = "";
-    for (int i = 2; i < 2 + 64 - digits; i++)
-    {
-        zeros = zeros + "0";
-    }
-    string tmp = string(*value);
-    tmp.erase(tmp.begin(), tmp.begin() + 2);
-    return zeros + tmp;
-}
-
-void convert_hexa(char *input, char *output)
-{
-    int loop = 0;
-    int i = 0;
-    while (input[loop] != '\0')
-    {
-        sprintf((char *)(output + i), "%02x", input[loop]);
-        loop += 1;
-        i += 2;
-    }
-    //marking the end of the string
-    output[i++] = '\0';
-}
-
 string Transaction::GenerateBytesForString(const string *value)
 {
 
     std::string strValue = value[0];
     uint32_t n = strValue.length();
 
-    char charValue[n+1];
+    char charValue[n + 1];
     strcpy(charValue, strValue.c_str());
-   
+
     char dummy[2];
 
     std::string tmpOut;
 
     int i;
-    for(i=0; i<n; i++){
-        int digits = sprintf(dummy, "%x", (uint32_t) charValue[i]);  // Get the utf-8 hex value of the string
+    for (i = 0; i < n; i++)
+    {
+        int digits = sprintf(dummy, "%x", (uint32_t)charValue[i]); // Get the utf-8 hex value of the string
         tmpOut = tmpOut + std::string(dummy);
     }
-   
-    
+
     std::string numOfChar = GenerateBytesForUint(n);
-   
+
     std::string prefix = "0000000000000000000000000000000000000000000000000000000000000020"; // string type prefix
     string zeros = "";
 
-    for(i=0; i<(32-n); i++)
+    for (i = 0; i < (32 - n); i++)
         zeros = zeros + "00"; // zero pending to right
 
     return prefix + numOfChar + tmpOut + zeros;
@@ -1065,16 +1055,15 @@ void Transaction::Sign(uint8_t *hash, uint8_t *sig, int *recid)
 #endif
 }
 
- void Transaction::SignTresor(uint8_t* hash, uint8_t* sig, int* recid){
+void Transaction::SignTresor(uint8_t *hash, uint8_t *sig, int *recid)
+{
     const ecdsa_curve *curve = &secp256k1;
-        uint8_t py;
+    uint8_t py;
 
+    int ok = ecdsa_sign_digest(curve, privateKey, hash, sig, &py, NULL);
 
-        int ok = ecdsa_sign_digest(curve, privateKey, hash, sig, &py,  NULL);
-        
-        recid[0] = py; 
- }
-
+    recid[0] = py;
+}
 
 vector<uint8_t> Transaction::RlpEncodeForRawTransaction(
     uint32_t nonceVal, uint64_t gasPriceVal, uint32_t gasLimitVal,

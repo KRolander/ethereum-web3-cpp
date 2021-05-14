@@ -327,11 +327,48 @@ std::string Util::VectorToString(const std::vector<uint8_t> buf) {
     return ret;
 }
 
+// Convert uint8_t to hexString
+
 void Util::bytes2hex(unsigned char *src, char *out, int len)
 {
     while (len--)
     {
         *out++ = HexLookUp[*src >> 4];
+        *out++ = HexLookUp[*src & 0x0F];
+        src++;
+    }
+    *out = 0;
+}
+
+// Convert uint16_t to hexString
+
+void Util::doubleBytes2hex(uint16_t *src, char *out, int len)
+{
+    while (len--)
+    {
+        *out++ = HexLookUp[*src >> 12];
+        *out++ = HexLookUp[(*src & 0x0F00) >> 8];   
+        *out++ = HexLookUp[(*src & 0x00F0) >> 4];
+        *out++ = HexLookUp[*src & 0x0F];
+        src++;
+    }
+    *out = 0;
+}
+
+// Convert uint32_t to hexString
+
+
+void Util::quarteBytes2hex(uint32_t *src, char *out, int len)
+{
+    while (len--)
+    {
+        *out++ = HexLookUp[(*src & 0xF0000000)>> 28];
+        *out++ = HexLookUp[(*src & 0x0F000000) >> 24];   
+        *out++ = HexLookUp[(*src & 0x00F00000) >> 20];
+        *out++ = HexLookUp[(*src & 0x000F0000) >> 16];
+        *out++ = HexLookUp[(*src & 0x0000F000) >> 12];
+        *out++ = HexLookUp[(*src & 0x00000F00) >> 8];   
+        *out++ = HexLookUp[(*src & 0x000000F0) >> 4];
         *out++ = HexLookUp[*src & 0x0F];
         src++;
     }

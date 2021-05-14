@@ -64,9 +64,7 @@ private:
 
 private:
     string GenerateContractBytes(const string *func);
-    string GenerateBytesForInt(const int32_t value);
     string GenerateBytesForUint(const uint32_t value);
-    string GenerateBytesForAddress(const string *value);
     string GenerateBytesForString(const string *value);
     string GenerateBytesForBytes(const char *value, const int len);
 
