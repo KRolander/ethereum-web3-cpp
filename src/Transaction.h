@@ -64,9 +64,7 @@ private:
 
 private:
     string GenerateContractBytes(const string *func);
-    string GenerateBytesForUint(const uint32_t value);
     string GenerateBytesForString(const string *value);
-    string GenerateBytesForBytes(const char *value, const int len);
 
     void GenerateSignature(uint8_t* signature, int* recid, uint32_t nonceVal, uint64_t gasPriceVal, uint32_t  gasLimitVal,
                            string* toStr, string* valueStr, string* dataStr);

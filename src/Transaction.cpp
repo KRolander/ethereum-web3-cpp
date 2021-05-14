@@ -44,7 +44,7 @@ Transaction::Transaction(Web3 *_web3, const string *address)
     web3 = _web3;
     contractAddress = address;
     options.gas = 0;
-    strcpy(options.from, "0xC229738aa9E76A10a74854110d40f27A579BC004");
+    strcpy(options.from, "0x51Cf24e50282CD6168916De6a8A24c3D4Eb74598");
     strcpy(options.to, "");
     strcpy(options.gasPrice, "0");
 
@@ -313,10 +313,8 @@ string Transaction::SetupContractData(const string *func, ...)
             }
             else
             {
-                std::cout << "uint is detected" << std::endl;
-                string output = GenerateBytesForUint(va_arg(args, uint32_t));
-
-                ret = ret + output;
+                std::cout << "Please precise the exact type" << std::endl;
+            
             }
         }
         else if (strncmp(params[i].c_str(), "string", sizeof("string")) == 0)
@@ -834,24 +832,6 @@ string Transaction::GenerateContractBytes(const string *func)
     return out_alternative;
 }
 
-string Transaction::GenerateBytesForUint(const uint32_t value)
-{
-    char output[70];
-    memset(output, 0, sizeof(output));
-
-    // check number of digits
-    char dummy[64];
-    int digits = sprintf(dummy, "%x", (uint32_t)value);
-
-    // fill 0 and copy number to string
-    for (int i = 2; i < 2 + 64 - digits; i++)
-    {
-        sprintf(output, "%s%s", output, "0");
-    }
-    sprintf(output, "%s%x", output, (uint32_t)value);
-    return string(output);
-}
-
 string Transaction::GenerateBytesForString(const string *value)
 {
 
@@ -872,7 +852,13 @@ string Transaction::GenerateBytesForString(const string *value)
         tmpOut = tmpOut + std::string(dummy);
     }
 
-    std::string numOfChar = GenerateBytesForUint(n);
+    std::string zerosForNumOfChar = "00000000000000000000000000000000000000000000000000000000";
+    char charData[9]; 
+
+    Util::quarteBytes2hex(&n,charData,8);
+    std::string numOfChar(charData);
+
+
 
     std::string prefix = "0000000000000000000000000000000000000000000000000000000000000020"; // string type prefix
     string zeros = "";
@@ -880,13 +866,9 @@ string Transaction::GenerateBytesForString(const string *value)
     for (i = 0; i < (32 - n); i++)
         zeros = zeros + "00"; // zero pending to right
 
-    return prefix + numOfChar + tmpOut + zeros;
+    return prefix + numOfChar[0] + numOfChar[1] + numOfChar[2] + numOfChar[3] + numOfChar[4] + numOfChar[5] + numOfChar[6] + numOfChar[7] + tmpOut + zeros;
 }
 
-string Transaction::GenerateBytesForBytes(const char *value, const int len)
-{
-    std::cout << "GenerateBytesForBytes" << std::endl;
-}
 
 vector<uint8_t> Transaction::RlpEncode(
     uint32_t nonceVal, uint64_t gasPriceVal, uint32_t gasLimitVal,
