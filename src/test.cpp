@@ -69,8 +69,7 @@ int main()
         transaction.SetPrivateKey(privateKeyBytes);
 
         std::string func = "my_set(uint8[32])"; //"mySet(string)";//"my_set(uint8[32])";
-        uint8_t rawdata[32] = {0xdb, 0x8a, 0x04, 0x22, 0x24, 0xc4, 0x4b, 0x05, 0xa9, 0x7e, 0x5f, 0x2a, 0x41, 0x0e, 0xa6, 0x04, 0xd8, 0x18, 0xbb, 0xe9, 0xe6, 0xa5, 0xd2, 0xbe, 0xed, 0x57, 0x78, 0xe7, 0x9e, 0xfd, 0x4a, 0xcf};
-
+        uint8_t rawdata[32] = {0xdb, 0x8a, 0x04, 0x22, 0x24, 0xc4, 0x4b, 0x05, 0xa9, 0x7e, 0x5f, 0x2a, 0x41, 0x0e, 0xa6, 0x04, 0xd8, 0x18, 0xbb, 0xe9, 0xe6, 0xa5, 0xd2, 0xbe, 0xed, 0x57, 0x78, 0xe7, 0x9e, 0xfd, 0x4a, 0xcf};   
         std::string strData = "Hello";
 
         char dataString[70];
@@ -82,7 +81,7 @@ int main()
 
         std::cout << "Contract " << p << std::endl;
 
-        std::string result = transaction.SendTransaction(nonceVal, gasPriceVal, gasLimitVal, &toStr, &valueStr, &p);
+        std::string result = transaction.createTransaction(nonceVal, gasPriceVal, gasLimitVal, &toStr, &valueStr, &p);
         std::cout << "To send : " << result << std::endl;
 
     }
@@ -115,7 +114,7 @@ int main()
 
         std::cout << "Contract " << p2 << std::endl;
 
-        std::string result = transaction.SendTransaction(nonceVal, gasPriceVal, gasLimitVal, &toStr, &valueStr, &p2);
+        std::string result = transaction.createTransaction(nonceVal, gasPriceVal, gasLimitVal, &toStr, &valueStr, &p2);
         std::cout << "To send : " << result << std::endl;
 
     }
