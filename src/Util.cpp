@@ -13,6 +13,8 @@
 
 #include <string.h>
 #include <cstring>
+#include <iterator>
+
 
 // returns output (header) length
 uint32_t Util::RlpEncodeWholeHeader(uint8_t* header_output, uint32_t total_len) {
@@ -220,6 +222,8 @@ std::vector<uint8_t> Util::ConvertCharStrToVector(const uint8_t *in) {
     uint8_t tmp[MAX_SIZE];
     strcpy((char *)tmp, (char *)in);
     std::vector<uint8_t> out;
+
+    
     printf(" Here is tmp %s\n", tmp);
 
     // remove "0x"
@@ -231,8 +235,9 @@ std::vector<uint8_t> Util::ConvertCharStrToVector(const uint8_t *in) {
     }
     
     size_t lenstr = strlen(ptr);
+    // uint8_t out[lenstr];
     std::cout << "Lenght : " << lenstr << std::endl;
-
+    // int j=0;
     for (int i=0; i<lenstr; i+=2) {
         char c[3];
         c[0] = *(ptr+i);
@@ -241,6 +246,7 @@ std::vector<uint8_t> Util::ConvertCharStrToVector(const uint8_t *in) {
         c[2] = 0x00;
         uint8_t val = strtol(c, nullptr, 16);
         out.push_back(val);
+        
         std::cout << (uint32_t) out[ret] << ' ';
 
         ret++;
@@ -249,9 +255,205 @@ std::vector<uint8_t> Util::ConvertCharStrToVector(const uint8_t *in) {
 
 
     std::cout << "Lenght : " << lenstr << std::endl;
-
-
+    // x, x + sizeof x / sizeof x[0]
+    // std::vector<uint8_t> outter(out, out + sizeof out / sizeof out[0]);
     return out;
+}
+
+
+
+void hexStringToUint8_t(std::vector<uint8_t> dest, const char *source, int bytes_n)
+{
+
+    std::vector<uint8_t> * destV = &dest;
+
+    
+    int i;
+    int j = 0;
+    for (i = 0; i < bytes_n; i++)
+    {
+        if (source[j] == '0')
+        {
+            dest[i] = 0; //0x00
+        }
+        else if (source[j] == '1')
+        {
+            dest[i] = 16; // 0x10
+        }
+        else if (source[j] == '2')
+        {
+            dest[i] = 32; // 0x20
+        }
+        else if (source[j] == '3')
+        {
+            dest[i] = 48; // 0x30
+        }
+        else if (source[j] == '4')
+        {
+            dest[i] = 64; // 0x40
+        }
+        else if (source[j] == '5')
+        {
+            dest[i] = 80; // 0x50
+        }
+        else if (source[j] == '6')
+        {
+            dest[i] = 96; // 0x60
+        }
+        else if (source[j] == '7')
+        {
+            dest[i] = 112; // 0x70
+        }
+        else if (source[j] == '8')
+        {
+            dest[i] = 128; // 0x80
+        }
+        else if (source[j] == '9')
+        {
+            dest[i] = 144; // 0x90
+        }
+        else if (source[j] == 'a')
+        {
+            dest[i] = 160; // 0xa0
+        }
+        else if (source[j] == 'b')
+        {
+            dest[i] = 176; // 0xb0
+        }
+        else if (source[j] == 'c')
+        {
+            dest[i] = 192; // 0xc0
+        }
+        else if (source[j] == 'd')
+        {
+            dest[i] = 208; // 0xd0
+        }
+        else if (source[j] == 'e')
+        {
+            dest[i] = 224; // 0xe0
+        }
+        else if (source[j] == 'f')
+        {
+            dest[i] = 240; // 0xf0
+        }
+        else if (source[j] == 'A')
+        {
+            dest[i] = 160; // 0xa0
+        }
+        else if (source[j] == 'B')
+        {
+            dest[i] = 176; // 0xb0
+        }
+        else if (source[j] == 'C')
+        {
+            dest[i] = 192; // 0xc0
+        }
+        else if (source[j] == 'D')
+        {
+            dest[i] = 208; // 0xd0
+        }
+        else if (source[j] == 'E')
+        {
+            dest[i] = 224; // 0xe0
+        }
+        else if (source[j] == 'F')
+        {
+            dest[i] = 240; // 0xf0
+        }
+
+        j++;
+
+        if (source[j] == '0')
+        {
+            dest[i] = (dest[i] | 0x00);
+        }
+        else if (source[j] == '1')
+        {
+            dest[i] = (dest[i] | 0x01);
+        }
+        else if (source[j] == '2')
+        {
+            dest[i] = (dest[i] | 0x02);
+        }
+        else if (source[j] == '3')
+        {
+            dest[i] = (dest[i] | 0x03);
+        }
+        else if (source[j] == '4')
+        {
+            dest[i] = (dest[i] | 0x04);
+        }
+        else if (source[j] == '5')
+        {
+            dest[i] = (dest[i] | 0x05);
+        }
+        else if (source[j] == '6')
+        {
+            dest[i] = (dest[i] | 0x06);
+        }
+        else if (source[j] == '7')
+        {
+            dest[i] = (dest[i] | 0x07);
+        }
+        else if (source[j] == '8')
+        {
+            dest[i] = (dest[i] | 0x08);
+        }
+        else if (source[j] == '9')
+        {
+            dest[i] = (dest[i] | 0x09);
+        }
+        else if (source[j] == 'a')
+        {
+            dest[i] = (dest[i] | 0x0a);
+        }
+        else if (source[j] == 'b')
+        {
+            dest[i] = (dest[i] | 0x0b);
+        }
+        else if (source[j] == 'c')
+        {
+            dest[i] = (dest[i] | 0x0c);
+        }
+        else if (source[j] == 'd')
+        {
+            dest[i] = (dest[i] | 0x0d);
+        }
+        else if (source[j] == 'e')
+        {
+            dest[i] = (dest[i] | 0x0e);
+        }
+        else if (source[j] == 'f')
+        {
+            dest[i] = (dest[i] | 0x0f);
+        }
+        else if (source[j] == 'A')
+        {
+            dest[i] = (dest[i] | 0x0a);
+        }
+        else if (source[j] == 'B')
+        {
+            dest[i] = (dest[i] | 0x0b);
+        }
+        else if (source[j] == 'C')
+        {
+            dest[i] = (dest[i] | 0x0c);
+        }
+        else if (source[j] == 'D')
+        {
+            dest[i] = (dest[i] | 0x0d);
+        }
+        else if (source[j] == 'E')
+        {
+            dest[i] = (dest[i] | 0x0e);
+        }
+        else if (source[j] == 'F')
+        {
+            dest[i] = (dest[i] | 0x0f);
+        }
+
+        j++;
+    }
 }
 
 std::vector<uint8_t> Util::ConvertStringToVector(const std::string* str) {
@@ -261,7 +463,230 @@ std::vector<uint8_t> Util::ConvertStringToVector(const std::string* str) {
     // uint8_t *test4 = test3.data();
     // std::vector<uint32_t> test = ConvertCharStrToVector(test4);
     // std::vector<uint8_t> test2;
-    return ConvertCharStrToVector((uint8_t*)(str->c_str()));
+    
+    // str->erase(0,2);
+    // std::vector<uint8_t> out;
+
+    // boost::algorithm::unhex(str->begin(), str->end(), std::back_inserter(out));
+
+    // return out;
+  
+    std::string strTmp(str[0]);
+
+    strTmp.erase(0,2);
+
+    int bytes_n = strTmp.size() / 2;
+    // uint8_t *convertToUint8 = new uint8_t[hexStrSize];
+    std::vector<uint8_t> dest(bytes_n);
+
+    // hexStringToUint8_t(convertToUint8, (char *) str->c_str(), hexStrSize);
+    std::cout << " ______ Iron Man _______" << std::endl;
+
+
+    
+
+    
+
+    char * source = (char *) strTmp.c_str();
+
+    int i;
+    int j = 0;
+    for (i = 0; i < bytes_n; i++)
+    {
+        if (source[j] == '0')
+        {
+            dest[i] = 0; //0x00
+        }
+        else if (source[j] == '1')
+        {
+            dest[i] = 16; // 0x10
+        }
+        else if (source[j] == '2')
+        {
+            dest[i] = 32; // 0x20
+        }
+        else if (source[j] == '3')
+        {
+            dest[i] = 48; // 0x30
+        }
+        else if (source[j] == '4')
+        {
+            dest[i] = 64; // 0x40
+        }
+        else if (source[j] == '5')
+        {
+            dest[i] = 80; // 0x50
+        }
+        else if (source[j] == '6')
+        {
+            dest[i] = 96; // 0x60
+        }
+        else if (source[j] == '7')
+        {
+            dest[i] = 112; // 0x70
+        }
+        else if (source[j] == '8')
+        {
+            dest[i] = 128; // 0x80
+        }
+        else if (source[j] == '9')
+        {
+            dest[i] = 144; // 0x90
+        }
+        else if (source[j] == 'a')
+        {
+            dest[i] = 160; // 0xa0
+        }
+        else if (source[j] == 'b')
+        {
+            dest[i] = 176; // 0xb0
+        }
+        else if (source[j] == 'c')
+        {
+            dest[i] = 192; // 0xc0
+        }
+        else if (source[j] == 'd')
+        {
+            dest[i] = 208; // 0xd0
+        }
+        else if (source[j] == 'e')
+        {
+            dest[i] = 224; // 0xe0
+        }
+        else if (source[j] == 'f')
+        {
+            dest[i] = 240; // 0xf0
+        }
+        else if (source[j] == 'A')
+        {
+            dest[i] = 160; // 0xa0
+        }
+        else if (source[j] == 'B')
+        {
+            dest[i] = 176; // 0xb0
+        }
+        else if (source[j] == 'C')
+        {
+            dest[i] = 192; // 0xc0
+        }
+        else if (source[j] == 'D')
+        {
+            dest[i] = 208; // 0xd0
+        }
+        else if (source[j] == 'E')
+        {
+            dest[i] = 224; // 0xe0
+        }
+        else if (source[j] == 'F')
+        {
+            dest[i] = 240; // 0xf0
+        }
+
+        j++;
+
+        if (source[j] == '0')
+        {
+            dest[i] = (dest[i] | 0x00);
+        }
+        else if (source[j] == '1')
+        {
+            dest[i] = (dest[i] | 0x01);
+        }
+        else if (source[j] == '2')
+        {
+            dest[i] = (dest[i] | 0x02);
+        }
+        else if (source[j] == '3')
+        {
+            dest[i] = (dest[i] | 0x03);
+        }
+        else if (source[j] == '4')
+        {
+            dest[i] = (dest[i] | 0x04);
+        }
+        else if (source[j] == '5')
+        {
+            dest[i] = (dest[i] | 0x05);
+        }
+        else if (source[j] == '6')
+        {
+            dest[i] = (dest[i] | 0x06);
+        }
+        else if (source[j] == '7')
+        {
+            dest[i] = (dest[i] | 0x07);
+        }
+        else if (source[j] == '8')
+        {
+            dest[i] = (dest[i] | 0x08);
+        }
+        else if (source[j] == '9')
+        {
+            dest[i] = (dest[i] | 0x09);
+        }
+        else if (source[j] == 'a')
+        {
+            dest[i] = (dest[i] | 0x0a);
+        }
+        else if (source[j] == 'b')
+        {
+            dest[i] = (dest[i] | 0x0b);
+        }
+        else if (source[j] == 'c')
+        {
+            dest[i] = (dest[i] | 0x0c);
+        }
+        else if (source[j] == 'd')
+        {
+            dest[i] = (dest[i] | 0x0d);
+        }
+        else if (source[j] == 'e')
+        {
+            dest[i] = (dest[i] | 0x0e);
+        }
+        else if (source[j] == 'f')
+        {
+            dest[i] = (dest[i] | 0x0f);
+        }
+        else if (source[j] == 'A')
+        {
+            dest[i] = (dest[i] | 0x0a);
+        }
+        else if (source[j] == 'B')
+        {
+            dest[i] = (dest[i] | 0x0b);
+        }
+        else if (source[j] == 'C')
+        {
+            dest[i] = (dest[i] | 0x0c);
+        }
+        else if (source[j] == 'D')
+        {
+            dest[i] = (dest[i] | 0x0d);
+        }
+        else if (source[j] == 'E')
+        {
+            dest[i] = (dest[i] | 0x0e);
+        }
+        else if (source[j] == 'F')
+        {
+            dest[i] = (dest[i] | 0x0f);
+        }
+
+        j++;
+    }
+    
+    
+    // int i;
+    // for(i=0; i<hexStrSize; i++)
+    //     std::cout << (uint32_t) convertToUint8[i];
+    // std::cout << std::endl;     
+
+    // std::vector<uint8_t> outter(convertToUint8, convertToUint8 + sizeof convertToUint8 / sizeof convertToUint8[0]);
+    
+    return dest;
+
+    // return ConvertCharStrToVector((uint8_t*)(str->c_str()));
 }
 
 uint32_t Util::ConvertCharStrToUintArray(uint8_t *out, const uint8_t *in) {

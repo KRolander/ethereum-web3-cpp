@@ -43,7 +43,7 @@ public:
     void SetPrivateKey(const uint8_t *key);
     string SetupContractData(const string *func, ...);
     string Call(const string* param);
-    string SendTransaction(uint32_t nonceVal, uint64_t gasPriceVal, uint32_t gasLimitVal,
+    string createTransaction(uint32_t nonceVal, uint64_t gasPriceVal, uint32_t gasLimitVal,
                            string *toStr, string *valueStr, string *dataStr);
     
     vector<uint8_t> RlpEncode_v2(

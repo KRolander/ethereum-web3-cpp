@@ -344,7 +344,7 @@ string Transaction::Call(const string *param)
     return result;
 }
 
-string Transaction::SendTransaction(uint32_t nonceVal, uint64_t gasPriceVal, uint32_t gasLimitVal,
+string Transaction::createTransaction(uint32_t nonceVal, uint64_t gasPriceVal, uint32_t gasLimitVal,
                                     string *toStr, string *valueStr, string *dataStr)
 {
 

@@ -14,7 +14,11 @@
 #include <string.h>
 #include <cstring>
 
-#define MAX_SIZE 4096
+#include <sstream>
+#include <iomanip>
+#include <boost/algorithm/hex.hpp>
+
+#define MAX_SIZE 16384
 
 static char HexLookUp[] = "0123456789abcdef";
 
