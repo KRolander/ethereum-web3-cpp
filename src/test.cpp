@@ -26,6 +26,7 @@
 void testFunction(std::string *strValues);
 int chhex(char ch);
 void HexStrToUchar(unsigned char *dest, const char *source, int bytes_n);
+void hexStringToUint8_t(uint8_t *dest, const char *source, int bytes_n);
 int main()
 {
     Web3 web3((std::string *)ETH_HOST, (std::string *)PATH);
@@ -35,26 +36,28 @@ int main()
     uint8_t res;
     uint32_t resLenght;
 
-    uint32_t mode = 1; // Mode: 1 simple data sending 2: double signature
+    uint32_t mode = 2; // Mode: 1 simple data sending 2: double signature
 
     resLenght = Util::RlpEncodeItem(&res, &toEncode, 1);
 
     char hexStr[20];
     Util::BufToCharStr(hexStr, &toEncode, 1);
 
-    std::cout << std::hex << hexStr << std::endl;
+    // std::cout << std::hex << hexStr << std::endl;
 
     std::string from = "b37bedd521a67af5cdce434ec9177e2931d82ff92427386d8e8fc8e363d780a4"; //"afc46b7fdfc9eb29d67362a6e4df578adeb2eb610af22ae8b3fcb8b3956c3bf3";
 
     uint8_t privateKeyBytes[PRIVATE_KEY_SIZE];
-    HexStrToUchar(privateKeyBytes, &from[0], from.size());
+    hexStringToUint8_t(privateKeyBytes, &from[0], PRIVATE_KEY_SIZE);
+
+    // HexStrToUchar(privateKeyBytes, &from[0], from.size());
 
     int i;
     for (i = 0; i < PRIVATE_KEY_SIZE; i++)
     {
         std::cout << (uint32_t)privateKeyBytes[i] << ' ';
     }
-    std::cout << std::endl;
+    // std::cout << std::endl;
     // std::string uintToStr = (char *) toStr;
     uint32_t nonceVal = 1;
     uint64_t gasPriceVal = 0x4A817C800; //46038239233;
@@ -75,11 +78,11 @@ int main()
         char dataString[70];
         Util::BufToCharStr(dataString, rawdata, 32);
 
-        std::cout << "BufToCharStr " << dataString << std::endl;
+        // std::cout << "BufToCharStr " << dataString << std::endl;
 
         std::string p = transaction.SetupContractData(&func, rawdata);
 
-        std::cout << "Contract " << p << std::endl;
+        // std::cout << "Contract " << p << std::endl;
 
         std::string result = transaction.createTransaction(nonceVal, gasPriceVal, gasLimitVal, &toStr, &valueStr, &p);
         std::cout << "To send : " << result << std::endl;
@@ -91,7 +94,7 @@ int main()
         std::string func = "setMyData(uint256,uint8,uint256,uint256)"; // "my_set(uint8[32])"; //"get(uint256)";
 
         Payload transactionPayload;
-        int32_t ID = 0x77;
+        uint8_t ID = 0x97;
         std::string payloadData = "db8a042224c44b05a97e5f2a410ea604d818bbe9e6a5d2beed5778e79efd4acf";
   
         string secondPrivateKey = "2a53a7438211849cb95cd4ffe182e01711c34dd525707ab1a0a30fff0b18605b";
@@ -110,9 +113,9 @@ int main()
         // std::string p3 = transaction.SetupContractData(&func2, payload2);
         // std::cout << "###### Contract " << p3 << std::endl;
 
-        std::string p2 = transaction.SetupContractData(&func, payloadData, ID, transactionPayload.r, transactionPayload.s);
+        std::string p2 = transaction.SetupContractData(&func, payloadData,&ID,transactionPayload.r, transactionPayload.s);
 
-        std::cout << "Contract " << p2 << std::endl;
+        // std::cout << "Contract " << p2 << std::endl;
 
         std::string result = transaction.createTransaction(nonceVal, gasPriceVal, gasLimitVal, &toStr, &valueStr, &p2);
         std::cout << "To send : " << result << std::endl;
@@ -140,4 +143,196 @@ int chhex(char ch)
     if (tolower(ch) >= 'a' && tolower(ch) <= 'f')
         return ch - 'a' + 10;
     return -1;
+}
+
+
+void hexStringToUint8_t(uint8_t *dest, const char *source, int bytes_n)
+{
+
+    int i;
+    int j = 0;
+    for (i = 0; i < bytes_n; i++)
+    {
+        if (source[j] == '0')
+        {
+            dest[i] = 0; //0x00
+        }
+        else if (source[j] == '1')
+        {
+            dest[i] = 16; // 0x10
+        }
+        else if (source[j] == '2')
+        {
+            dest[i] = 32; // 0x20
+        }
+        else if (source[j] == '3')
+        {
+            dest[i] = 48; // 0x30
+        }
+        else if (source[j] == '4')
+        {
+            dest[i] = 64; // 0x40
+        }
+        else if (source[j] == '5')
+        {
+            dest[i] = 80; // 0x50
+        }
+        else if (source[j] == '6')
+        {
+            dest[i] = 96; // 0x60
+        }
+        else if (source[j] == '7')
+        {
+            dest[i] = 112; // 0x70
+        }
+        else if (source[j] == '8')
+        {
+            dest[i] = 128; // 0x80
+        }
+        else if (source[j] == '9')
+        {
+            dest[i] = 144; // 0x90
+        }
+        else if (source[j] == 'a')
+        {
+            dest[i] = 160; // 0xa0
+        }
+        else if (source[j] == 'b')
+        {
+            dest[i] = 176; // 0xb0
+        }
+        else if (source[j] == 'c')
+        {
+            dest[i] = 192; // 0xc0
+        }
+        else if (source[j] == 'd')
+        {
+            dest[i] = 208; // 0xd0
+        }
+        else if (source[j] == 'e')
+        {
+            dest[i] = 224; // 0xe0
+        }
+        else if (source[j] == 'f')
+        {
+            dest[i] = 240; // 0xf0
+        }
+        else if (source[j] == 'A')
+        {
+            dest[i] = 160; // 0xa0
+        }
+        else if (source[j] == 'B')
+        {
+            dest[i] = 176; // 0xb0
+        }
+        else if (source[j] == 'C')
+        {
+            dest[i] = 192; // 0xc0
+        }
+        else if (source[j] == 'D')
+        {
+            dest[i] = 208; // 0xd0
+        }
+        else if (source[j] == 'E')
+        {
+            dest[i] = 224; // 0xe0
+        }
+        else if (source[j] == 'F')
+        {
+            dest[i] = 240; // 0xf0
+        }
+
+        j++;
+
+        if (source[j] == '0')
+        {
+            dest[i] = (dest[i] | 0x00);
+        }
+        else if (source[j] == '1')
+        {
+            dest[i] = (dest[i] | 0x01);
+        }
+        else if (source[j] == '2')
+        {
+            dest[i] = (dest[i] | 0x02);
+        }
+        else if (source[j] == '3')
+        {
+            dest[i] = (dest[i] | 0x03);
+        }
+        else if (source[j] == '4')
+        {
+            dest[i] = (dest[i] | 0x04);
+        }
+        else if (source[j] == '5')
+        {
+            dest[i] = (dest[i] | 0x05);
+        }
+        else if (source[j] == '6')
+        {
+            dest[i] = (dest[i] | 0x06);
+        }
+        else if (source[j] == '7')
+        {
+            dest[i] = (dest[i] | 0x07);
+        }
+        else if (source[j] == '8')
+        {
+            dest[i] = (dest[i] | 0x08);
+        }
+        else if (source[j] == '9')
+        {
+            dest[i] = (dest[i] | 0x09);
+        }
+        else if (source[j] == 'a')
+        {
+            dest[i] = (dest[i] | 0x0a);
+        }
+        else if (source[j] == 'b')
+        {
+            dest[i] = (dest[i] | 0x0b);
+        }
+        else if (source[j] == 'c')
+        {
+            dest[i] = (dest[i] | 0x0c);
+        }
+        else if (source[j] == 'd')
+        {
+            dest[i] = (dest[i] | 0x0d);
+        }
+        else if (source[j] == 'e')
+        {
+            dest[i] = (dest[i] | 0x0e);
+        }
+        else if (source[j] == 'f')
+        {
+            dest[i] = (dest[i] | 0x0f);
+        }
+        else if (source[j] == 'A')
+        {
+            dest[i] = (dest[i] | 0x0a);
+        }
+        else if (source[j] == 'B')
+        {
+            dest[i] = (dest[i] | 0x0b);
+        }
+        else if (source[j] == 'C')
+        {
+            dest[i] = (dest[i] | 0x0c);
+        }
+        else if (source[j] == 'D')
+        {
+            dest[i] = (dest[i] | 0x0d);
+        }
+        else if (source[j] == 'E')
+        {
+            dest[i] = (dest[i] | 0x0e);
+        }
+        else if (source[j] == 'F')
+        {
+            dest[i] = (dest[i] | 0x0f);
+        }
+
+        j++;
+    }
 }
