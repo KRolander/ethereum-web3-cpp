@@ -50,6 +50,196 @@ void Payload::HexStrToUchar(unsigned char *dest, const char *source, int bytes_n
     for (bytes_n--; bytes_n >= 0; bytes_n--)
         dest[bytes_n] = 16 * chhex(source[bytes_n * 2]) + chhex(source[bytes_n * 2 + 1]);
 }
+void Payload::hexStringToUint8_t(uint8_t *dest, const char *source, int bytes_n)
+{
+
+    int i;
+    int j = 0;
+    for (i = 0; i < bytes_n; i++)
+    {
+        if (source[j] == '0')
+        {
+            dest[i] = 0; //0x00
+        }
+        else if (source[j] == '1')
+        {
+            dest[i] = 16; // 0x10
+        }
+        else if (source[j] == '2')
+        {
+            dest[i] = 32; // 0x20
+        }
+        else if (source[j] == '3')
+        {
+            dest[i] = 48; // 0x30
+        }
+        else if (source[j] == '4')
+        {
+            dest[i] = 64; // 0x40
+        }
+        else if (source[j] == '5')
+        {
+            dest[i] = 80; // 0x50
+        }
+        else if (source[j] == '6')
+        {
+            dest[i] = 96; // 0x60
+        }
+        else if (source[j] == '7')
+        {
+            dest[i] = 112; // 0x70
+        }
+        else if (source[j] == '8')
+        {
+            dest[i] = 128; // 0x80
+        }
+        else if (source[j] == '9')
+        {
+            dest[i] = 144; // 0x90
+        }
+        else if (source[j] == 'a')
+        {
+            dest[i] = 160; // 0xa0
+        }
+        else if (source[j] == 'b')
+        {
+            dest[i] = 176; // 0xb0
+        }
+        else if (source[j] == 'c')
+        {
+            dest[i] = 192; // 0xc0
+        }
+        else if (source[j] == 'd')
+        {
+            dest[i] = 208; // 0xd0
+        }
+        else if (source[j] == 'e')
+        {
+            dest[i] = 224; // 0xe0
+        }
+        else if (source[j] == 'f')
+        {
+            dest[i] = 240; // 0xf0
+        }
+        else if (source[j] == 'A')
+        {
+            dest[i] = 160; // 0xa0
+        }
+        else if (source[j] == 'B')
+        {
+            dest[i] = 176; // 0xb0
+        }
+        else if (source[j] == 'C')
+        {
+            dest[i] = 192; // 0xc0
+        }
+        else if (source[j] == 'D')
+        {
+            dest[i] = 208; // 0xd0
+        }
+        else if (source[j] == 'E')
+        {
+            dest[i] = 224; // 0xe0
+        }
+        else if (source[j] == 'F')
+        {
+            dest[i] = 240; // 0xf0
+        }
+
+        j++;
+
+        if (source[j] == '0')
+        {
+            dest[i] = (dest[i] | 0x00);
+        }
+        else if (source[j] == '1')
+        {
+            dest[i] = (dest[i] | 0x01);
+        }
+        else if (source[j] == '2')
+        {
+            dest[i] = (dest[i] | 0x02);
+        }
+        else if (source[j] == '3')
+        {
+            dest[i] = (dest[i] | 0x03);
+        }
+        else if (source[j] == '4')
+        {
+            dest[i] = (dest[i] | 0x04);
+        }
+        else if (source[j] == '5')
+        {
+            dest[i] = (dest[i] | 0x05);
+        }
+        else if (source[j] == '6')
+        {
+            dest[i] = (dest[i] | 0x06);
+        }
+        else if (source[j] == '7')
+        {
+            dest[i] = (dest[i] | 0x07);
+        }
+        else if (source[j] == '8')
+        {
+            dest[i] = (dest[i] | 0x08);
+        }
+        else if (source[j] == '9')
+        {
+            dest[i] = (dest[i] | 0x09);
+        }
+        else if (source[j] == 'a')
+        {
+            dest[i] = (dest[i] | 0x0a);
+        }
+        else if (source[j] == 'b')
+        {
+            dest[i] = (dest[i] | 0x0b);
+        }
+        else if (source[j] == 'c')
+        {
+            dest[i] = (dest[i] | 0x0c);
+        }
+        else if (source[j] == 'd')
+        {
+            dest[i] = (dest[i] | 0x0d);
+        }
+        else if (source[j] == 'e')
+        {
+            dest[i] = (dest[i] | 0x0e);
+        }
+        else if (source[j] == 'f')
+        {
+            dest[i] = (dest[i] | 0x0f);
+        }
+        else if (source[j] == 'A')
+        {
+            dest[i] = (dest[i] | 0x0a);
+        }
+        else if (source[j] == 'B')
+        {
+            dest[i] = (dest[i] | 0x0b);
+        }
+        else if (source[j] == 'C')
+        {
+            dest[i] = (dest[i] | 0x0c);
+        }
+        else if (source[j] == 'D')
+        {
+            dest[i] = (dest[i] | 0x0d);
+        }
+        else if (source[j] == 'E')
+        {
+            dest[i] = (dest[i] | 0x0e);
+        }
+        else if (source[j] == 'F')
+        {
+            dest[i] = (dest[i] | 0x0f);
+        }
+
+        j++;
+    }
+}
 
 // data is a hexstring it corresponds to uint256 type of Solidity
 // !!! Attention !!! it must be noted that we supposed that data is uint256, it can be other
@@ -62,13 +252,18 @@ void Payload::signedPayload(std::string data, uint8_t ID, std::string privKey, T
 
     // string to uint8_t
     uint8_t privateKeyBytes[PRIVATE_KEY_SIZE];
-    HexStrToUchar(privateKeyBytes, &privKey[0], PRIVATE_KEY_SIZE);
+    // HexStrToUchar(privateKeyBytes, &privKey[0], PRIVATE_KEY_SIZE);
    
     
-    // data is a hexstring 
-    uint8_t dataBytes[data.size()/2];
-    HexStrToUchar(dataBytes, &data[0], data.size());
+    hexStringToUint8_t(privateKeyBytes, &privKey[0], PRIVATE_KEY_SIZE);
+
     
+    // data is a hexstring 
+    int sizeData = data.size()/2;
+    uint8_t dataBytes[sizeData];
+    // HexStrToUchar(dataBytes, &data[0], data.size());
+    
+    hexStringToUint8_t(dataBytes, &data[0], sizeData);
 
     // // Hash(data || ID) (Keccak-256) 
     int iterate = data.size()/2 + 1;
@@ -100,7 +295,8 @@ void Payload::signedPayload(std::string data, uint8_t ID, std::string privKey, T
     uint8_t signature[SIGNATURE_LENGTH];
     int recid[1] = {0};
 
-    transactionObject.Sign(hashDigest, signature, recid);
+    // transactionObject.Sign(hashDigest, signature, recid);
+    transactionObject.SignTresor((uint8_t *)hashDigest, signature, recid);
 
     char out_char_signature[129]; // 64 * 2 + 1
     Util::bytes2hex(signature, out_char_signature, 64);

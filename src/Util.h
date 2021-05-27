@@ -46,6 +46,8 @@ public:
     static std::string  VectorToString(const std::vector<uint8_t> buf);
 
     static void bytes2hex(unsigned char *src, char *out, int len);
+    static void singleBytes2hex(unsigned char *src, char *out);
+
     static void doubleBytes2hex(uint16_t *src, char *out, int len);
     static void quarteBytes2hex(uint32_t *src, char *out, int len);
 

@@ -79,7 +79,7 @@ string Transaction::SetupContractData(const string *func, ...)
     p = strtok(p, ",");
     if (p != NULL)
     {
-        std::cout << "strtok => " << p << std::endl;
+        // std::cout << "strtok => " << p << std::endl;
         params.push_back(string(p));
         paramCount++;
     }
@@ -88,21 +88,21 @@ string Transaction::SetupContractData(const string *func, ...)
         p = strtok(0, ",");
         if (p != 0)
         {
-            std::cout << "strtok 1 => " << p << std::endl;
+            // std::cout << "strtok 1 => " << p << std::endl;
             params.push_back(string(p));
             paramCount++;
         }
     }
-    std::cout << "Here : " << paramCount << std::endl;
+    // std::cout << "Here : " << paramCount << std::endl;
 
     va_list args;
     va_start(args, paramCount);
     for (int i = 0; i < paramCount; ++i)
     {
-        std::cout << "params[0].c_str() " << params[0].c_str() << std::endl;
-        // std::cout << "params[1].c_str() " << params[1].c_str() << std::endl;
-        // std::cout << "params[2].c_str() " << params[2].c_str() << std::endl;
-        // std::cout << "params[3].c_str() " << params[3].c_str() << std::endl;
+    //     std::cout << "params[0].c_str() " << params[0].c_str() << std::endl;
+    //     std::cout << "params[1].c_str() " << params[1].c_str() << std::endl;
+    //     std::cout << "params[2].c_str() " << params[2].c_str() << std::endl;
+    //     std::cout << "params[3].c_str() " << params[3].c_str() << std::endl;
 
         // if (strncmp(params[0].c_str(), "uint256", 7 /*sizeof("bytes")*/) == 0)
         // {
@@ -113,10 +113,10 @@ string Transaction::SetupContractData(const string *func, ...)
         //     std::cout << "======= > Here is okay 2" << std::endl;
         // }
 
-        std::cout << "Params " << params[i].c_str() << " i == " << i << std::endl;
+       //  std::cout << "Params " << params[i].c_str() << " i == " << i << std::endl;
         if (strncmp(params[i].c_str(), "uint", 4 /*sizeof("uint")*/) == 0)
         {
-            std::cout << " ############## Here " << std::endl;
+          //  std::cout << " ############## Here " << std::endl;
             if ((strncmp(params[i].c_str(), "uint8[", 6 /*sizeof("uint")*/) == 0) && (strncmp(params[i].c_str(), "uint8[]", 7 /*sizeof("uint")*/) != 0))
             {
                 std::cout << "uint8[ is detected" << std::endl;
@@ -150,21 +150,25 @@ string Transaction::SetupContractData(const string *func, ...)
                     ret = ret + zeros + tmpData[k] + tmpData[k + 1];
 
                 // ret = ret + output;
-                std::cout << " Overall data : " << ret << std::endl;
+                // std::cout << " Overall data : " << ret << std::endl;
             }
             else if ((strncmp(params[i].c_str(), "uint8", 5 /*sizeof("uint")*/) == 0) && (strncmp(params[i].c_str(), "uint8[", 6 /*sizeof("uint")*/) != 0) && (strncmp(params[i].c_str(), "uint8[]", 7 /*sizeof("uint")*/) != 0))
             {
-                std::cout << "uint8 is detected" << std::endl;
-                // string output = GenerateBytesForUint(va_arg(args, uint32_t));
+                 std::cout << "uint8 is detected" << std::endl;
 
-                uint8_t *data = va_arg(args, uint8_t *);
+                // string output = GenerateBytesForUint(va_arg(args, uint32_t));
+                uint8_t * data = va_arg(args, uint8_t *);
                 string zeros = "00000000000000000000000000000000000000000000000000000000000000";
+
+                // std::cout << "Data " << (uint32_t) data << std::endl;
 
                 char charData[3];
                 Util::bytes2hex(data, charData, 2);
                 std::string tmpData(charData);
 
                 ret = ret + zeros + tmpData[0] + tmpData[1];
+                // ret = ret + zeros + '7' + '7';
+
             }
             else if (strncmp(params[i].c_str(), "uint8[]", 7 /*sizeof("uint")*/) == 0)
             {
@@ -174,7 +178,7 @@ string Transaction::SetupContractData(const string *func, ...)
             else if ((strncmp(params[i].c_str(), "uint16[", 7 /*sizeof("uint")*/) == 0) && (strncmp(params[i].c_str(), "uint16[]", 8 /*sizeof("uint")*/) != 0))
             {
 
-                std::cout << "uint16[ is detected" << std::endl;
+                // std::cout << "uint16[ is detected" << std::endl;
 
                 char *p2;
                 char tmp2[params[i].size()];
@@ -215,11 +219,11 @@ string Transaction::SetupContractData(const string *func, ...)
             }
             else if (strncmp(params[i].c_str(), "uint16[]", 8 /*sizeof("uint")*/) == 0)
             {
-                std::cout << "###### Pleasse Precise length of the input array" << std::endl;
+                // std::cout << "###### Pleasse Precise length of the input array" << std::endl;
             }
             else if ((strncmp(params[i].c_str(), "uint32[", 7 /*sizeof("uint")*/) == 0) && (strncmp(params[i].c_str(), "uint32[]", 8 /*sizeof("uint")*/) != 0))
             {
-                std::cout << "uint32[ is detected" << std::endl;
+                // std::cout << "uint32[ is detected" << std::endl;
 
                 char *p2;
                 char tmp2[params[i].size()];
@@ -262,29 +266,30 @@ string Transaction::SetupContractData(const string *func, ...)
             }
             else if (strncmp(params[i].c_str(), "uint32[]", 8 /*sizeof("uint")*/) == 0)
             {
-                std::cout << "###### Pleasse Precise length of the input array" << std::endl;
+                // std::cout << "###### Pleasse Precise length of the input array" << std::endl;
             }
             // uint256 is already a hex string so nothing to do
             else if (strncmp(params[i].c_str(), "uint256", 7 /*sizeof("uint")*/) == 0)
             {
+                std::cout << "uint256 is detected" << std::endl;
                 ret = ret + va_arg(args, string);
                 std::cout << " => => => => " << ret << std::endl;
             }
             else
             {
-                std::cout << "Please precise the exact type" << std::endl;
+                // std::cout << "Please precise the exact type" << std::endl;
             
             }
         }
         else if (strncmp(params[i].c_str(), "string", sizeof("string")) == 0)
         {
-            std::cout << "String is detected" << std::endl;
+            // std::cout << "String is detected" << std::endl;
             string output = GenerateBytesForString(va_arg(args, string *));
             ret = ret + string(output);
         }
         else if (strncmp(params[i].c_str(), "bytes", 5 /*sizeof("bytes")*/) == 0)
         {
-            std::cout << " ########### Bytes32 is detected" << std::endl;
+            // std::cout << " ########### Bytes32 is detected" << std::endl;
 
             const char *tmp = va_arg(args, char *);
 
@@ -320,7 +325,7 @@ string Transaction::SetupContractData(const string *func, ...)
                 // printf("Here is my output %s\n", charOutput);
                 ret = ret + string(charOutput);
             }
-            std::cout << " => => => => " << ret << std::endl;
+            // std::cout << " => => => => " << ret << std::endl;
         }
         else
         {
@@ -610,7 +615,7 @@ void Transaction::GenerateSignature(uint8_t *signature, int *recid, uint32_t non
 
     t = t + t_hex;
 
-    std::cout << " TODO Sha3 in GenerateSignature" << std::endl;
+    // std::cout << " TODO Sha3 in GenerateSignature" << std::endl;
 
     t.erase(0, 2); // remove '0x'
 
@@ -630,19 +635,19 @@ void Transaction::GenerateSignature(uint8_t *signature, int *recid, uint32_t non
     // Sign((uint8_t *)digest, signature, recid);
     SignTresor((uint8_t *)digest, signature, recid);
     int i;
-    std::cout << "Signature" << std::endl;
-    std::cout << "r : " << std::endl;
-    for (i = 0; i < 32; i++)
-    {
-        std::cout << (uint32_t)signature[i] << ' ';
-    }
-    std::cout << std::endl;
-    std::cout << "s : " << std::endl;
-    for (i = 32; i < 64; i++)
-    {
-        std::cout << (uint32_t)signature[i] << ' ';
-    }
-    std::cout << std::endl;
+    // std::cout << "Signature" << std::endl;
+    // std::cout << "r : " << std::endl;
+    // for (i = 0; i < 32; i++)
+    // {
+    //     std::cout << (uint32_t)signature[i] << ' ';
+    // }
+    // std::cout << std::endl;
+    // std::cout << "s : " << std::endl;
+    // for (i = 32; i < 64; i++)
+    // {
+    //     std::cout << (uint32_t)signature[i] << ' ';
+    // }
+    // std::cout << std::endl;
 #if 0
     printf("\nhash_input : %s\n", tmp);
     printf("\nhash_output: %s\n", hashedStr);
@@ -684,15 +689,15 @@ string Transaction::GenerateContractBytes(const string *func)
 
     // std::cout << "SC Keccak : " << std::endl;
 
-    for (i = 0; i < 32; i++)
-    {
-        std::cout << (uint32_t)digest[i] << ' ';
-    }
-    std::cout << std::endl;
+    // for (i = 0; i < 32; i++)
+    // {
+    //     std::cout << (uint32_t)digest[i] << ' ';
+    // }
+    // std::cout << std::endl;
 
-    // string out = web3->Web3Sha3(&in);
-    std::cout << " TODO web3->Web3Sha3 " << std::endl;
-    std::cout << "Commande to hash : " << in << std::endl;
+    // // string out = web3->Web3Sha3(&in);
+    // std::cout << " TODO web3->Web3Sha3 " << std::endl;
+    // std::cout << "Commande to hash : " << in << std::endl;
 
     // TODO : ADD
     // Digest to hex
@@ -780,14 +785,14 @@ vector<uint8_t> Transaction::RlpEncode(
     std::vector<uint8_t> data = Util::ConvertStringToVector(dataStr);
 
 
-    std::cout << "ValueStr : " << valueStr[0] << std::endl;
+    // std::cout << "ValueStr : " << valueStr[0] << std::endl;
 
-    std::cout << "Value in bytes  : " << std::endl;
+    // std::cout << "Value in bytes  : " << std::endl;
 
-    for (std::vector<uint8_t>::const_iterator i = value.begin(); i != value.end(); ++i)
-        std::cout << (uint32_t)*i << ' ';
+    // for (std::vector<uint8_t>::const_iterator i = value.begin(); i != value.end(); ++i)
+    //     std::cout << (uint32_t)*i << ' ';
 
-    std::cout << std::endl;
+    // std::cout << std::endl;
 
     vector<uint8_t> outputNonce = Util::RlpEncodeItemWithVector(nonce);
     vector<uint8_t> outputGasPrice = Util::RlpEncodeItemWithVector(gasPrice);

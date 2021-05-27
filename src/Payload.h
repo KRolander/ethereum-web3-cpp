@@ -20,7 +20,7 @@
 #include "Web3.h"
 #include "crypto/sha3.h"
 
-#define MAX_SIZE 4096
+#define MAX_SIZE 16384
 
 class Payload {
 public:
@@ -29,6 +29,7 @@ public:
 
   //  sign(Hash(data || ID)) with privateKey, return signature{s, r}
   void signedPayload(std::string data, uint8_t ID, std::string privKey, Transaction& transactionObject);
+  void hexStringToUint8_t(uint8_t *dest, const char *source, int bytes_n);
   void Test();
 
   
@@ -43,3 +44,4 @@ void HexStrToUchar(unsigned char *dest, const char *source, int bytes_n);
 };
 
 #endif //PAYLOAD_H
+
