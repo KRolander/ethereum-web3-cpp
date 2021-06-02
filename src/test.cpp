@@ -32,16 +32,13 @@ int main()
     Web3 web3((std::string *)ETH_HOST, (std::string *)PATH);
     Transaction transaction(&web3, (std::string *)CONTRACT_ADDRESS);
 
-    uint8_t toEncode = 1;
+    // uint8_t toEncode = 1;
     uint8_t res;
-    uint32_t resLenght;
+    uint32_t mode = 1; // Mode: 1 simple data sending 2: double signature
 
-    uint32_t mode = 2; // Mode: 1 simple data sending 2: double signature
 
-    resLenght = Util::RlpEncodeItem(&res, &toEncode, 1);
-
-    char hexStr[20];
-    Util::BufToCharStr(hexStr, &toEncode, 1);
+    // char hexStr[20];
+    // Util::BufToCharStr(hexStr, &toEncode, 1);
 
     // std::cout << std::hex << hexStr << std::endl;
 

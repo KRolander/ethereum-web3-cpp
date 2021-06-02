@@ -138,22 +138,21 @@ uint32_t Util::RlpEncodeItem(uint8_t *output, const uint8_t *input, uint32_t inp
     }
 }
 
-std::vector<uint8_t> RlpEncodeItemWithVector_v3(uint8_t *inputUint, uint32_t input_len)
-{
 
+int Util::RlpEncodeItemWithArray(uint8_t *inputUint, uint32_t input_len)
+{
     if (input_len == 1 && inputUint[0] == 0x00)
     {
         uint8_t output[1];
         output[0] = 0x80;
-        std::vector<uint8_t> outputT(output, output + 1);
-        return outputT;
+        
+        return input_len + 1;
     }
     else if (input_len == 1 && inputUint[0] < 128)
     {
         uint8_t output[1];
         output[0] = inputUint[0];
-        std::vector<uint8_t> outputT(output, output + 1);
-        return outputT;
+        return input_len + 1;
     }
     else if (input_len <= 55)
     {
@@ -161,8 +160,8 @@ std::vector<uint8_t> RlpEncodeItemWithVector_v3(uint8_t *inputUint, uint32_t inp
         uint8_t _ = (uint8_t)0x80 + (uint8_t)input_len;
         output[0] = _;
         int t;
-        int h=1;
-        for(t=0; t<input_len; t++)
+        int h = 1;
+        for (t = 0; t < input_len; t++)
         {
             output[h] = inputUint[t];
             h++;
@@ -174,14 +173,14 @@ std::vector<uint8_t> RlpEncodeItemWithVector_v3(uint8_t *inputUint, uint32_t inp
             std::cout << (uint32_t)output[p] << " ";
             // inputUint[p] = input[p];
         }
-        std::vector<uint8_t> outputT(output, output + h);
-        return outputT;
+       
+        return input_len + h;
     }
     else
     {
         uint8_t tmp_header[MAX_SIZE];
         uint32_t tmp = input_len;
-         std::cout << "Size : " << tmp << std::endl;
+        std::cout << "Size : " << tmp << std::endl;
 
         int k = 0;
         while ((uint32_t)(tmp / 256) > 0)
@@ -206,23 +205,21 @@ std::vector<uint8_t> RlpEncodeItemWithVector_v3(uint8_t *inputUint, uint32_t inp
         uint8_t hexdigit = len - 1;
         int l = 1;
 
-        
-
-        for (int i = len-1; i >=0; i--)
+        for (int i = len - 1; i >= 0; i--)
         {
             header[l] = tmp_header[i];
             l++;
         }
         std::cout << "_________Hulk__________" << std::endl;
 
-        uint8_t output[len+k+input_len];
-        for (p = 0; p < len+k; p++)
+        uint8_t output[len + k + input_len];
+        for (p = 0; p < len + k; p++)
         {
             std::cout << (uint32_t)header[p] << " ";
             output[p] = header[p];
             // inputUint[p] = input[p];
         }
-        int b=len+k;
+        int b = len + k;
         for (p = 0; p < input_len; p++)
         {
             std::cout << (uint32_t)inputUint[p] << " ";
@@ -231,7 +228,103 @@ std::vector<uint8_t> RlpEncodeItemWithVector_v3(uint8_t *inputUint, uint32_t inp
             // inputUint[p] = input[p];
         }
         std::cout << std::endl;
-       
+
+        return len + k + input_len;
+    }
+
+}
+
+std::vector<uint8_t> RlpEncodeItemWithVector_v3(uint8_t *inputUint, uint32_t input_len)
+{
+
+    if (input_len == 1 && inputUint[0] == 0x00)
+    {
+        uint8_t output[1];
+        output[0] = 0x80;
+        std::vector<uint8_t> outputT(output, output + 1);
+        return outputT;
+    }
+    else if (input_len == 1 && inputUint[0] < 128)
+    {
+        uint8_t output[1];
+        output[0] = inputUint[0];
+        std::vector<uint8_t> outputT(output, output + 1);
+        return outputT;
+    }
+    else if (input_len <= 55)
+    {
+        uint8_t output[55];
+        uint8_t _ = (uint8_t)0x80 + (uint8_t)input_len;
+        output[0] = _;
+        int t;
+        int h = 1;
+        for (t = 0; t < input_len; t++)
+        {
+            output[h] = inputUint[t];
+            h++;
+        }
+        std::cout << "_________Hulk__________" << std::endl;
+        int p;
+        for (p = 0; p < h; p++)
+        {
+            std::cout << (uint32_t)output[p] << " ";
+            // inputUint[p] = input[p];
+        }
+        std::vector<uint8_t> outputT(output, output + h);
+        return outputT;
+    }
+    else
+    {
+        uint8_t tmp_header[MAX_SIZE];
+        uint32_t tmp = input_len;
+        std::cout << "Size : " << tmp << std::endl;
+
+        int k = 0;
+        while ((uint32_t)(tmp / 256) > 0)
+        {
+            tmp_header[k] = (uint8_t)(tmp % 256);
+            k++;
+            tmp = (uint32_t)(tmp / 256);
+            std::cout << " k = " << k << std::endl;
+        }
+        tmp_header[k] = tmp;
+        uint8_t len = k + 1;
+        int p;
+        for (p = 0; p < len; p++)
+        {
+            std::cout << (uint32_t)tmp_header[p] << " ";
+            // inputUint[p] = input[p];
+        }
+        //tmp_header[k] = 0xb7 + len;
+        uint8_t header[MAX_SIZE];
+
+        header[0] = 0xb7 + len;
+        uint8_t hexdigit = len - 1;
+        int l = 1;
+
+        for (int i = len - 1; i >= 0; i--)
+        {
+            header[l] = tmp_header[i];
+            l++;
+        }
+        std::cout << "_________Hulk__________" << std::endl;
+
+        uint8_t output[len + k + input_len];
+        for (p = 0; p < len + k; p++)
+        {
+            std::cout << (uint32_t)header[p] << " ";
+            output[p] = header[p];
+            // inputUint[p] = input[p];
+        }
+        int b = len + k;
+        for (p = 0; p < input_len; p++)
+        {
+            std::cout << (uint32_t)inputUint[p] << " ";
+            output[b] = inputUint[p];
+            b++;
+            // inputUint[p] = input[p];
+        }
+        std::cout << std::endl;
 
         std::vector<uint8_t> outputT(output, output + len + k + input_len);
         return outputT;
@@ -266,10 +359,6 @@ std::vector<uint8_t> Util::RlpEncodeItemWithVector(const std::vector<uint8_t> in
     // std::cout << std::endl;
 
     // std::vector<uint8_t> output(outputTMP, outputTMP + input_len_v);
-
-
-
-
 
     std::vector<uint8_t> output;
     uint16_t input_len = input.size();
@@ -309,7 +398,7 @@ std::vector<uint8_t> Util::RlpEncodeItemWithVector(const std::vector<uint8_t> in
         {
             header.push_back(tmp_header[hexdigit - i]);
         }
-    
+
         output.insert(output.end(), header.begin(), header.end());
         output.insert(output.end(), input.begin(), input.end());
     }
@@ -322,6 +411,78 @@ std::vector<uint8_t> Util::RlpEncodeItemWithVector(const std::vector<uint8_t> in
 
     return output;
 }
+
+int Util::convertUint32ToUint8Array(uint32_t in_number, uint8_t *out_number)
+{   
+    int arraySize;
+    int k=0;
+    uint8_t tmpArray[4];
+    if((in_number >> 8) >= 0)
+    {
+        while ((uint32_t)(in_number >> 8) > 0)
+        {   
+            // std::cout << "Here" << std::endl;
+            tmpArray[k] = uint8_t (in_number & 0xff);
+            // std::cout << "   tmpArray[k] : " << (uint32_t) tmpArray[k] << std::endl;
+
+            k++;
+            in_number = in_number >> 8;
+        }
+        tmpArray[k] = uint8_t (in_number & 0xff);
+        //  std::cout << "   tmpArray[k] : " << (uint32_t) tmpArray[k] << std::endl;
+        arraySize = k+1;
+        int i;
+        int lastElement = arraySize - 1;
+        for(i=0; i<arraySize; i++)
+        {
+            out_number[i] =tmpArray[lastElement - i];
+        }
+    }
+    else
+    {
+        out_number[0] = uint8_t (in_number & 0xff);
+        arraySize = 1;
+    }
+    return arraySize;
+
+}
+
+
+int Util::convertUint64ToUint8Array(uint64_t in_number, uint8_t *out_number)
+{   
+    int arraySize;
+    int k=0;
+    uint8_t tmpArray[8];
+    if((in_number >> 8) >= 0)
+    {
+        while ((uint64_t)(in_number >> 8) > 0)
+        {   
+            // std::cout << "Here" << std::endl;
+            tmpArray[k] = uint8_t (in_number & 0xff);
+            // std::cout << "   tmpArray[k] : " << (uint32_t) tmpArray[k] << std::endl;
+
+            k++;
+            in_number = in_number >> 8;
+        }
+        tmpArray[k] = uint8_t (in_number & 0xff);
+        //  std::cout << "   tmpArray[k] : " << (uint32_t) tmpArray[k] << std::endl;
+        arraySize = k+1;
+        int i;
+        int lastElement = arraySize - 1;
+        for(i=0; i<arraySize; i++)
+        {
+            out_number[i] =tmpArray[lastElement - i];
+        }
+    }
+    else
+    {
+        out_number[0] = uint8_t (in_number & 0xff);
+        arraySize = 1;
+    }
+    return arraySize;
+
+}
+
 
 std::vector<uint8_t> Util::ConvertNumberToVector(uint32_t val)
 {
@@ -665,6 +826,213 @@ std::vector<uint8_t> Util::ConvertStringToVector(const std::string *str)
     // return ConvertCharStrToVector((uint8_t*)(str->c_str()));
 }
 
+void Util::ConvertStringToArray(std::string *str, uint8_t *dest, int sizeOfArray)
+{
+    // std::cout << " ******** " << str->size() << std::endl;
+
+    // return out;
+
+    // std::string strTmp(str[0]);
+
+    str->erase(0, 2);
+
+    // int bytes_n = strTmp.size() / 2;
+
+    // //std::vector<uint8_t> dest(bytes_n);
+    // uint8_t dest[bytes_n];
+
+    // std::cout << " ______ Iron Man _______" << std::endl;
+
+    char *source = (char *)str->c_str();
+
+    int i;
+    int j = 0;
+    for (i = 0; i < sizeOfArray; i++)
+    {
+        if (source[j] == '0')
+        {
+            dest[i] = 0; //0x00
+        }
+        else if (source[j] == '1')
+        {
+            dest[i] = 16; // 0x10
+        }
+        else if (source[j] == '2')
+        {
+            dest[i] = 32; // 0x20
+        }
+        else if (source[j] == '3')
+        {
+            dest[i] = 48; // 0x30
+        }
+        else if (source[j] == '4')
+        {
+            dest[i] = 64; // 0x40
+        }
+        else if (source[j] == '5')
+        {
+            dest[i] = 80; // 0x50
+        }
+        else if (source[j] == '6')
+        {
+            dest[i] = 96; // 0x60
+        }
+        else if (source[j] == '7')
+        {
+            dest[i] = 112; // 0x70
+        }
+        else if (source[j] == '8')
+        {
+            dest[i] = 128; // 0x80
+        }
+        else if (source[j] == '9')
+        {
+            dest[i] = 144; // 0x90
+        }
+        else if (source[j] == 'a')
+        {
+            dest[i] = 160; // 0xa0
+        }
+        else if (source[j] == 'b')
+        {
+            dest[i] = 176; // 0xb0
+        }
+        else if (source[j] == 'c')
+        {
+            dest[i] = 192; // 0xc0
+        }
+        else if (source[j] == 'd')
+        {
+            dest[i] = 208; // 0xd0
+        }
+        else if (source[j] == 'e')
+        {
+            dest[i] = 224; // 0xe0
+        }
+        else if (source[j] == 'f')
+        {
+            dest[i] = 240; // 0xf0
+        }
+        else if (source[j] == 'A')
+        {
+            dest[i] = 160; // 0xa0
+        }
+        else if (source[j] == 'B')
+        {
+            dest[i] = 176; // 0xb0
+        }
+        else if (source[j] == 'C')
+        {
+            dest[i] = 192; // 0xc0
+        }
+        else if (source[j] == 'D')
+        {
+            dest[i] = 208; // 0xd0
+        }
+        else if (source[j] == 'E')
+        {
+            dest[i] = 224; // 0xe0
+        }
+        else if (source[j] == 'F')
+        {
+            dest[i] = 240; // 0xf0
+        }
+
+        j++;
+
+        if (source[j] == '0')
+        {
+            dest[i] = (dest[i] | 0x00);
+        }
+        else if (source[j] == '1')
+        {
+            dest[i] = (dest[i] | 0x01);
+        }
+        else if (source[j] == '2')
+        {
+            dest[i] = (dest[i] | 0x02);
+        }
+        else if (source[j] == '3')
+        {
+            dest[i] = (dest[i] | 0x03);
+        }
+        else if (source[j] == '4')
+        {
+            dest[i] = (dest[i] | 0x04);
+        }
+        else if (source[j] == '5')
+        {
+            dest[i] = (dest[i] | 0x05);
+        }
+        else if (source[j] == '6')
+        {
+            dest[i] = (dest[i] | 0x06);
+        }
+        else if (source[j] == '7')
+        {
+            dest[i] = (dest[i] | 0x07);
+        }
+        else if (source[j] == '8')
+        {
+            dest[i] = (dest[i] | 0x08);
+        }
+        else if (source[j] == '9')
+        {
+            dest[i] = (dest[i] | 0x09);
+        }
+        else if (source[j] == 'a')
+        {
+            dest[i] = (dest[i] | 0x0a);
+        }
+        else if (source[j] == 'b')
+        {
+            dest[i] = (dest[i] | 0x0b);
+        }
+        else if (source[j] == 'c')
+        {
+            dest[i] = (dest[i] | 0x0c);
+        }
+        else if (source[j] == 'd')
+        {
+            dest[i] = (dest[i] | 0x0d);
+        }
+        else if (source[j] == 'e')
+        {
+            dest[i] = (dest[i] | 0x0e);
+        }
+        else if (source[j] == 'f')
+        {
+            dest[i] = (dest[i] | 0x0f);
+        }
+        else if (source[j] == 'A')
+        {
+            dest[i] = (dest[i] | 0x0a);
+        }
+        else if (source[j] == 'B')
+        {
+            dest[i] = (dest[i] | 0x0b);
+        }
+        else if (source[j] == 'C')
+        {
+            dest[i] = (dest[i] | 0x0c);
+        }
+        else if (source[j] == 'D')
+        {
+            dest[i] = (dest[i] | 0x0d);
+        }
+        else if (source[j] == 'E')
+        {
+            dest[i] = (dest[i] | 0x0e);
+        }
+        else if (source[j] == 'F')
+        {
+            dest[i] = (dest[i] | 0x0f);
+        }
+
+        j++;
+    }
+}
+
 uint32_t Util::ConvertCharStrToUintArray(uint8_t *out, const uint8_t *in)
 {
     uint32_t ret = 0;
@@ -745,14 +1113,12 @@ std::string Util::VectorToString(const std::vector<uint8_t> buf)
     return ret;
 }
 
-
 void Util::singleBytes2hex(unsigned char *src, char *out)
 {
-    
+
     *out++ = HexLookUp[*src >> 4];
     *out++ = HexLookUp[*src & 0x0F];
 }
-
 
 // Convert uint8_t to hexString
 

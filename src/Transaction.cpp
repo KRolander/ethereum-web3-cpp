@@ -35,6 +35,8 @@
 
 static secp256k1_context *ctx;
 
+vector<uint8_t> encodedVector;
+
 /**
  * Public functions
  * */
@@ -51,12 +53,10 @@ Transaction::Transaction(Web3 *_web3, const string *address)
     // ctx = secp256k1_context_create(SECP256K1_CONTEXT_SIGN);
 }
 
-
 void Transaction::SetPrivateKey(const uint8_t *key)
 {
     privateKey = key;
 }
-
 
 string Transaction::SetupContractData(const string *func, ...)
 {
@@ -65,7 +65,6 @@ string Transaction::SetupContractData(const string *func, ...)
     // address
     string contractBytes = GenerateContractBytes(func);
     ret = contractBytes;
-
 
     size_t paramCount = 0;
     vector<string> params;
@@ -99,10 +98,10 @@ string Transaction::SetupContractData(const string *func, ...)
     va_start(args, paramCount);
     for (int i = 0; i < paramCount; ++i)
     {
-    //     std::cout << "params[0].c_str() " << params[0].c_str() << std::endl;
-    //     std::cout << "params[1].c_str() " << params[1].c_str() << std::endl;
-    //     std::cout << "params[2].c_str() " << params[2].c_str() << std::endl;
-    //     std::cout << "params[3].c_str() " << params[3].c_str() << std::endl;
+        //     std::cout << "params[0].c_str() " << params[0].c_str() << std::endl;
+        //     std::cout << "params[1].c_str() " << params[1].c_str() << std::endl;
+        //     std::cout << "params[2].c_str() " << params[2].c_str() << std::endl;
+        //     std::cout << "params[3].c_str() " << params[3].c_str() << std::endl;
 
         // if (strncmp(params[0].c_str(), "uint256", 7 /*sizeof("bytes")*/) == 0)
         // {
@@ -113,10 +112,10 @@ string Transaction::SetupContractData(const string *func, ...)
         //     std::cout << "======= > Here is okay 2" << std::endl;
         // }
 
-       //  std::cout << "Params " << params[i].c_str() << " i == " << i << std::endl;
+        //  std::cout << "Params " << params[i].c_str() << " i == " << i << std::endl;
         if (strncmp(params[i].c_str(), "uint", 4 /*sizeof("uint")*/) == 0)
         {
-          //  std::cout << " ############## Here " << std::endl;
+            //  std::cout << " ############## Here " << std::endl;
             if ((strncmp(params[i].c_str(), "uint8[", 6 /*sizeof("uint")*/) == 0) && (strncmp(params[i].c_str(), "uint8[]", 7 /*sizeof("uint")*/) != 0))
             {
                 std::cout << "uint8[ is detected" << std::endl;
@@ -154,10 +153,10 @@ string Transaction::SetupContractData(const string *func, ...)
             }
             else if ((strncmp(params[i].c_str(), "uint8", 5 /*sizeof("uint")*/) == 0) && (strncmp(params[i].c_str(), "uint8[", 6 /*sizeof("uint")*/) != 0) && (strncmp(params[i].c_str(), "uint8[]", 7 /*sizeof("uint")*/) != 0))
             {
-                 std::cout << "uint8 is detected" << std::endl;
+                std::cout << "uint8 is detected" << std::endl;
 
                 // string output = GenerateBytesForUint(va_arg(args, uint32_t));
-                uint8_t * data = va_arg(args, uint8_t *);
+                uint8_t *data = va_arg(args, uint8_t *);
                 string zeros = "00000000000000000000000000000000000000000000000000000000000000";
 
                 // std::cout << "Data " << (uint32_t) data << std::endl;
@@ -168,7 +167,6 @@ string Transaction::SetupContractData(const string *func, ...)
 
                 ret = ret + zeros + tmpData[0] + tmpData[1];
                 // ret = ret + zeros + '7' + '7';
-
             }
             else if (strncmp(params[i].c_str(), "uint8[]", 7 /*sizeof("uint")*/) == 0)
             {
@@ -244,25 +242,23 @@ string Transaction::SetupContractData(const string *func, ...)
                 std::string zeros = "00000000000000000000000000000000000000000000000000000000";
 
                 char charData[numbOfTabElements * 8 + 1];
-                Util::quarteBytes2hex(data,charData, numbOfTabElements * 8);
+                Util::quarteBytes2hex(data, charData, numbOfTabElements * 8);
                 std::string tmpData(charData);
 
                 int k;
                 for (k = 0; k < numbOfTabElements * 8 - 1; k += 8)
                     ret = ret + zeros + tmpData[k] + tmpData[k + 1] + tmpData[k + 2] + tmpData[k + 3] + tmpData[k + 4] + tmpData[k + 5] + tmpData[k + 6] + tmpData[k + 7];
-
             }
-            else if((strncmp(params[i].c_str(), "uint32", 6 /*sizeof("uint")*/) == 0) && (strncmp(params[i].c_str(), "uint32[", 7 /*sizeof("uint")*/) != 0) && (strncmp(params[i].c_str(), "uint32[]", 8 /*sizeof("uint")*/) != 0))
+            else if ((strncmp(params[i].c_str(), "uint32", 6 /*sizeof("uint")*/) == 0) && (strncmp(params[i].c_str(), "uint32[", 7 /*sizeof("uint")*/) != 0) && (strncmp(params[i].c_str(), "uint32[]", 8 /*sizeof("uint")*/) != 0))
             {
                 uint32_t *data = va_arg(args, uint32_t *);
 
                 std::string zeros = "00000000000000000000000000000000000000000000000000000000";
                 char charData[9];
-                Util::quarteBytes2hex(data,charData,8);
+                Util::quarteBytes2hex(data, charData, 8);
                 std::string tmpData(charData);
 
-                ret = ret + zeros + tmpData[0] + tmpData[1] + tmpData[2] + tmpData[3] + tmpData[4] + tmpData[5] + tmpData[6] + tmpData[7]; 
-    
+                ret = ret + zeros + tmpData[0] + tmpData[1] + tmpData[2] + tmpData[3] + tmpData[4] + tmpData[5] + tmpData[6] + tmpData[7];
             }
             else if (strncmp(params[i].c_str(), "uint32[]", 8 /*sizeof("uint")*/) == 0)
             {
@@ -278,7 +274,6 @@ string Transaction::SetupContractData(const string *func, ...)
             else
             {
                 // std::cout << "Please precise the exact type" << std::endl;
-            
             }
         }
         else if (strncmp(params[i].c_str(), "string", sizeof("string")) == 0)
@@ -335,7 +330,6 @@ string Transaction::SetupContractData(const string *func, ...)
     va_end(args);
     // std::cout << "Here" << std::endl;
 
-
     return ret;
 }
 
@@ -350,9 +344,8 @@ string Transaction::Call(const string *param)
 }
 
 string Transaction::createTransaction(uint32_t nonceVal, uint64_t gasPriceVal, uint32_t gasLimitVal,
-                                    string *toStr, string *valueStr, string *dataStr)
+                                      string *toStr, string *valueStr, string *dataStr)
 {
-
 
     uint8_t signature[SIGNATURE_LENGTH];
     memset(signature, 0, SIGNATURE_LENGTH);
@@ -375,7 +368,7 @@ string Transaction::createTransaction(uint32_t nonceVal, uint64_t gasPriceVal, u
 
     // std::cout << "Param to send : " << paramStr << std::endl;
 
-
+    encodedVector.clear();
     return web3->EthSendSignedTransaction(&paramStr, param.size());
 }
 
@@ -606,7 +599,6 @@ void Transaction::GenerateSignature(uint8_t *signature, int *recid, uint32_t non
 
     vector<uint8_t> encoded = RlpEncode(nonceVal, gasPriceVal, gasLimitVal, toStr, valueStr, dataStr);
 
-
     char t_c[encoded.size() * 2 + 1]; // 32 * 2 + 1
     Util::bytes2hex(&encoded[0], t_c, encoded.size());
 
@@ -625,7 +617,6 @@ void Transaction::GenerateSignature(uint8_t *signature, int *recid, uint32_t non
     uint8_t *toHash = new uint8_t[toHashSize];
 
     hexStringToUint8_t(toHash, &t[0], toHashSize);
-
 
     uint8_t digest[SHA3_256_DIGEST_LENGTH];
     // FIPS202_SHA3_256(toHash, toHashSize, digest);
@@ -750,12 +741,10 @@ string Transaction::GenerateBytesForString(const string *value)
     }
 
     std::string zerosForNumOfChar = "00000000000000000000000000000000000000000000000000000000";
-    char charData[9]; 
+    char charData[9];
 
-    Util::quarteBytes2hex(&n,charData,8);
+    Util::quarteBytes2hex(&n, charData, 8);
     std::string numOfChar(charData);
-
-
 
     std::string prefix = "0000000000000000000000000000000000000000000000000000000000000020"; // string type prefix
     string zeros = "";
@@ -766,6 +755,15 @@ string Transaction::GenerateBytesForString(const string *value)
     return prefix + numOfChar[0] + numOfChar[1] + numOfChar[2] + numOfChar[3] + numOfChar[4] + numOfChar[5] + numOfChar[6] + numOfChar[7] + tmpOut + zeros;
 }
 
+void printArrays(int sizeOfArray, uint8_t * dataArray)
+{
+    int k;
+    std::cout << "__________________________________________" << std::endl;
+    for(k=0; k<sizeOfArray; k++)
+        std::cout << std::hex << (uint32_t) dataArray[k] << " ";
+    std::cout << std::endl; 
+    std::cout << "__________________________________________" << std::endl;
+}
 
 vector<uint8_t> Transaction::RlpEncode(
     uint32_t nonceVal, uint64_t gasPriceVal, uint32_t gasLimitVal,
@@ -780,19 +778,70 @@ vector<uint8_t> Transaction::RlpEncode(
 
     vector<uint8_t> gasLimit = Util::ConvertNumberToVector(gasLimitVal);
     vector<uint8_t> to = Util::ConvertStringToVector(toStr);
+
     vector<uint8_t> value = Util::ConvertStringToVector(valueStr);
 
     std::vector<uint8_t> data = Util::ConvertStringToVector(dataStr);
 
+   
+///////////////////////////////////////////////////////////////////////////////
+// Test with vectors
 
-    // std::cout << "ValueStr : " << valueStr[0] << std::endl;
-
-    // std::cout << "Value in bytes  : " << std::endl;
-
-    // for (std::vector<uint8_t>::const_iterator i = value.begin(); i != value.end(); ++i)
-    //     std::cout << (uint32_t)*i << ' ';
-
+    // std::cout << "Conversions to Array" << std::endl;
     // std::cout << std::endl;
+
+    // uint8_t nonceValArray[4];
+    // int sizeArraygasLimit = Util::convertUint32ToUint8Array(nonceVal, nonceValArray);
+    // printArrays(sizeArraygasLimit, nonceValArray);
+
+    // uint8_t gasLimitArray[4];
+    // int sizeArraynonceVal = Util::convertUint32ToUint8Array(gasLimitVal, gasLimitArray);
+    // printArrays(sizeArraynonceVal, gasLimitArray);
+
+    // uint8_t gasPriceArray[8];
+    // int sizeArrayGasPrice = Util::convertUint64ToUint8Array(gasPriceVal, gasPriceArray);
+    // printArrays(sizeArrayGasPrice, gasPriceArray);
+
+    // std::cout << "toStr: " <<  toStr[0] << std::endl;
+
+    // int sizeArraytoStr = (toStr->size() / 2) - 1;
+    // uint8_t toStrArray[sizeArraytoStr];
+    // Util::ConvertStringToArray(toStr, toStrArray, sizeArraytoStr);
+    // printArrays(sizeArraytoStr, toStrArray);
+
+    // std::cout << "valueStr: " <<  valueStr[0] << std::endl;
+     
+    // int sizeArrayvalueStr = (valueStr->size() / 2) - 1;
+    // uint8_t valueStrArray[sizeArrayvalueStr];
+    // Util::ConvertStringToArray(valueStr, valueStrArray, sizeArrayvalueStr);
+    // printArrays(sizeArrayvalueStr, valueStrArray);
+    
+    // // std::cout << "Data: " <<  dataStr[0] << std::endl;
+    // int sizeArraydataStr = (dataStr->size() / 2) - 1;
+    // uint8_t dataStrArray[sizeArraydataStr];
+    // Util::ConvertStringToArray(dataStr, dataStrArray, sizeArraydataStr);
+    // printArrays(sizeArraydataStr, dataStrArray);
+    
+///////////////////////////////////////////////////////////////////////////////   
+
+
+    // int k;
+    // for(k=0; k< gasPrice.size(); k++)
+    //     std::cout << std::hex << (uint32_t) gasPrice[k] << " ";
+    // std::cout << std::endl;  
+
+    // int dataArraySize = (dataStr->size() / 2) - 1;
+    // uint8_t dataArray[dataArraySize];
+    // Util::ConvertStringToArray(dataStr, dataArray, dataArraySize);
+    
+    // std::cout << "__________________________________________" << std::endl;
+
+
+
+    // for(k=0; k<sizeArrayGasPrice; k++)
+    //     std::cout << std::hex << (uint32_t) gasPriceArray[k] << " ";
+    // std::cout << std::endl;    
+
 
     vector<uint8_t> outputNonce = Util::RlpEncodeItemWithVector(nonce);
     vector<uint8_t> outputGasPrice = Util::RlpEncodeItemWithVector(gasPrice);
@@ -801,6 +850,15 @@ vector<uint8_t> Transaction::RlpEncode(
     vector<uint8_t> outputValue = Util::RlpEncodeItemWithVector(value);
 
     vector<uint8_t> outputData = Util::RlpEncodeItemWithVector(data);
+
+    
+    encodedVector.insert(encodedVector.end(), outputNonce.begin(), outputNonce.end());
+    encodedVector.insert(encodedVector.end(), outputGasPrice.begin(), outputGasPrice.end());
+    encodedVector.insert(encodedVector.end(), outputGasLimit.begin(), outputGasLimit.end());
+    encodedVector.insert(encodedVector.end(), outputTo.begin(), outputTo.end());
+    encodedVector.insert(encodedVector.end(), outputValue.begin(), outputValue.end());
+    encodedVector.insert(encodedVector.end(), outputData.begin(), outputData.end());
+    
     vector<uint8_t> encoded = Util::RlpEncodeWholeHeaderWithVector(
         outputNonce.size() +
         outputGasPrice.size() +
@@ -810,13 +868,14 @@ vector<uint8_t> Transaction::RlpEncode(
         outputData.size());
     // prefix.size());
 
-    encoded.insert(encoded.end(), outputNonce.begin(), outputNonce.end());
-    encoded.insert(encoded.end(), outputGasPrice.begin(), outputGasPrice.end());
-    encoded.insert(encoded.end(), outputGasLimit.begin(), outputGasLimit.end());
-    encoded.insert(encoded.end(), outputTo.begin(), outputTo.end());
-    encoded.insert(encoded.end(), outputValue.begin(), outputValue.end());
-    encoded.insert(encoded.end(), outputData.begin(), outputData.end());
-   
+    encoded.insert(encoded.end(), encodedVector.begin(), encodedVector.end());
+    // encoded.insert(encoded.end(), outputNonce.begin(), outputNonce.end());
+    // encoded.insert(encoded.end(), outputGasPrice.begin(), outputGasPrice.end());
+    // encoded.insert(encoded.end(), outputGasLimit.begin(), outputGasLimit.end());
+    // encoded.insert(encoded.end(), outputTo.begin(), outputTo.end());
+    // encoded.insert(encoded.end(), outputValue.begin(), outputValue.end());
+    // encoded.insert(encoded.end(), outputData.begin(), outputData.end());
+
     return encoded;
 }
 
@@ -895,21 +954,22 @@ vector<uint8_t> Transaction::RlpEncodeForRawTransaction(
     {
         signature.push_back(sig[i]);
     }
-    vector<uint8_t> nonce = Util::ConvertNumberToVector(nonceVal);
+    // TODO : Vectors
+    // vector<uint8_t> nonce = Util::ConvertNumberToVector(nonceVal);
 
-    vector<uint8_t> gasPrice = Util::ConvertNumberToVector64(gasPriceVal);
+    // vector<uint8_t> gasPrice = Util::ConvertNumberToVector64(gasPriceVal);
 
-    vector<uint8_t> gasLimit = Util::ConvertNumberToVector(gasLimitVal);
-    vector<uint8_t> to = Util::ConvertStringToVector(toStr);
-    vector<uint8_t> value = Util::ConvertStringToVector(valueStr);
-    vector<uint8_t> data = Util::ConvertStringToVector(dataStr);
+    // vector<uint8_t> gasLimit = Util::ConvertNumberToVector(gasLimitVal);
+    // vector<uint8_t> to = Util::ConvertStringToVector(toStr);
+    // vector<uint8_t> value = Util::ConvertStringToVector(valueStr);
+    // vector<uint8_t> data = Util::ConvertStringToVector(dataStr);
 
-    vector<uint8_t> outputNonce = Util::RlpEncodeItemWithVector(nonce);
-    vector<uint8_t> outputGasPrice = Util::RlpEncodeItemWithVector(gasPrice);
-    vector<uint8_t> outputGasLimit = Util::RlpEncodeItemWithVector(gasLimit);
-    vector<uint8_t> outputTo = Util::RlpEncodeItemWithVector(to);
-    vector<uint8_t> outputValue = Util::RlpEncodeItemWithVector(value);
-    vector<uint8_t> outputData = Util::RlpEncodeItemWithVector(data);
+    // vector<uint8_t> outputNonce = Util::RlpEncodeItemWithVector(nonce);
+    // vector<uint8_t> outputGasPrice = Util::RlpEncodeItemWithVector(gasPrice);
+    // vector<uint8_t> outputGasLimit = Util::RlpEncodeItemWithVector(gasLimit);
+    // vector<uint8_t> outputTo = Util::RlpEncodeItemWithVector(to);
+    // vector<uint8_t> outputValue = Util::RlpEncodeItemWithVector(value);
+    // vector<uint8_t> outputData = Util::RlpEncodeItemWithVector(data);
 
     vector<uint8_t> R;
     R.insert(R.end(), signature.begin(), signature.begin() + (SIGNATURE_LENGTH / 2));
@@ -921,26 +981,38 @@ vector<uint8_t> Transaction::RlpEncodeForRawTransaction(
     vector<uint8_t> outputS = Util::RlpEncodeItemWithVector(S);
     vector<uint8_t> outputV = Util::RlpEncodeItemWithVector(V);
 
+    // vector<uint8_t> encoded = Util::RlpEncodeWholeHeaderWithVector(
+    //     outputNonce.size() +
+    //     outputGasPrice.size() +
+    //     outputGasLimit.size() +
+    //     outputTo.size() +
+    //     outputValue.size() +
+    //     outputData.size() +
+    //     outputR.size() +
+    //     outputS.size() +
+    //     outputV.size());
+
+    // encoded.insert(encoded.end(), outputNonce.begin(), outputNonce.end());
+    // encoded.insert(encoded.end(), outputGasPrice.begin(), outputGasPrice.end());
+    // encoded.insert(encoded.end(), outputGasLimit.begin(), outputGasLimit.end());
+    // encoded.insert(encoded.end(), outputTo.begin(), outputTo.end());
+    // encoded.insert(encoded.end(), outputValue.begin(), outputValue.end());
+    // encoded.insert(encoded.end(), outputData.begin(), outputData.end());
+    // encoded.insert(encoded.end(), outputV.begin(), outputV.end());
+    // encoded.insert(encoded.end(), outputR.begin(), outputR.end());
+    // encoded.insert(encoded.end(), outputS.begin(), outputS.end());
+
     vector<uint8_t> encoded = Util::RlpEncodeWholeHeaderWithVector(
-        outputNonce.size() +
-        outputGasPrice.size() +
-        outputGasLimit.size() +
-        outputTo.size() +
-        outputValue.size() +
-        outputData.size() +
         outputR.size() +
         outputS.size() +
-        outputV.size());
+        outputV.size() +
+        encodedVector.size());
 
-    encoded.insert(encoded.end(), outputNonce.begin(), outputNonce.end());
-    encoded.insert(encoded.end(), outputGasPrice.begin(), outputGasPrice.end());
-    encoded.insert(encoded.end(), outputGasLimit.begin(), outputGasLimit.end());
-    encoded.insert(encoded.end(), outputTo.begin(), outputTo.end());
-    encoded.insert(encoded.end(), outputValue.begin(), outputValue.end());
-    encoded.insert(encoded.end(), outputData.begin(), outputData.end());
+    encoded.insert(encoded.end(),encodedVector.begin(),encodedVector.end());
     encoded.insert(encoded.end(), outputV.begin(), outputV.end());
     encoded.insert(encoded.end(), outputR.begin(), outputR.end());
     encoded.insert(encoded.end(), outputS.begin(), outputS.end());
-
     return encoded;
 }
+
+

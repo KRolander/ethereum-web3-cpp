@@ -32,6 +32,9 @@ public:
     static uint32_t        RlpEncodeItem(uint8_t* output, const uint8_t* input, uint32_t input_len);
     static std::vector<uint8_t> RlpEncodeItemWithVector(const std::vector<uint8_t> input);
 
+
+    static int RlpEncodeItemWithArray(uint8_t *inputUint, uint32_t input_len);
+
     static uint32_t        ConvertNumberToUintArray(uint8_t *str, uint32_t val);
     static std::vector<uint8_t> ConvertNumberToVector(uint32_t val);
         static std::vector<uint8_t> ConvertNumberToVector64(uint64_t val);
@@ -39,6 +42,11 @@ public:
     static uint32_t        ConvertCharStrToUintArray(uint8_t *out, const uint8_t *in);
     static std::vector<uint8_t> ConvertCharStrToVector(const uint8_t *in);
     static std::vector<uint8_t> ConvertStringToVector(const std::string* str);
+
+    static void ConvertStringToArray(std::string* str, uint8_t *dest, int sizeOfArray);
+    static int convertUint32ToUint8Array(uint32_t in_number, uint8_t *out_number);
+    static int convertUint64ToUint8Array(uint64_t in_number, uint8_t *out_number);
+
 
     static uint8_t HexToInt(uint8_t s);
     static void    BufToCharStr(char* str, const uint8_t* buf, uint32_t len);
@@ -50,6 +58,8 @@ public:
 
     static void doubleBytes2hex(uint16_t *src, char *out, int len);
     static void quarteBytes2hex(uint32_t *src, char *out, int len);
+
+
 
 };
 
