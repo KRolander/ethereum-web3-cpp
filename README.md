@@ -8,22 +8,24 @@ In arm-cross-compile file you find a dedicated Makefile and guide for ARM cross-
 
 Please make an issue for questions or errors.
 
-First you have to source the project environment, the Makefile would use the path that is initialized in the setup.sh file.
+## First 
+You have to source the project environment, the Makefile would use the path that is initialized in the setup.sh file.
 
 
 ```bash 
 source ./setup.sh
 ``` 
 
-Second compile cyrptographic tools.
+## Second compile cyrptographic tools.
 
-trezor-crypto
+### Compile Trezor-Crypto
+
 ```bash 
 cd src/crypto
 make
 ``` 
 
-secp256k1 from Bitcoin source, probably should use a more optimal library
+### Compile secp256k1 from Bitcoin source, probably should use a more optimal library
 
 ```bash 
 cd src/secp256k1
@@ -32,7 +34,7 @@ make
 Copy the static library secp256k1.a to src.
 
 
-Third compile the program (test.cpp)
+### Third compile the program (test.cpp)
 
 ```bash
 cd src 
