@@ -34,7 +34,7 @@ make
 Copy the static library secp256k1.a to src.
 
 
-### Third compile the program (test.cpp)
+### Third compile the program (test.cpp)
 
 ```bash
 cd src 
