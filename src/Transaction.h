@@ -24,6 +24,9 @@
 #include "crypto/secp256k1.h"
 #include "crypto/bignum.h"
 
+#include <curl/curl.h>
+
+#define VERBOSE true
 
 using namespace std;
 
@@ -54,6 +57,8 @@ public:
     void Sign(uint8_t* hash, uint8_t* sig, int* recid);
     void SignTresor(uint8_t* hash, uint8_t* sig, int* recid);
     void hexStringToUint8_t(uint8_t*dest, const char *source, int bytes_n);
+    int sendData(std::string data, std::string api_endpoint);
+
 private:
     // Log Debug;
     // #define LOG(x) Debug.println(x)

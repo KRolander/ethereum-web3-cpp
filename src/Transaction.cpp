@@ -46,7 +46,7 @@ Transaction::Transaction(Web3 *_web3, const string *address)
     web3 = _web3;
     contractAddress = address;
     options.gas = 0;
-    strcpy(options.from, "0x51Cf24e50282CD6168916De6a8A24c3D4Eb74598");
+    strcpy(options.from, "0x4409e4cB0f6a0A4C3a840fB2B1Ff6800d6032B92");
     strcpy(options.to, "");
     strcpy(options.gasPrice, "0");
 
@@ -1016,3 +1016,85 @@ vector<uint8_t> Transaction::RlpEncodeForRawTransaction(
 }
 
 
+
+// WriteCallback used by sendData (Curl)
+static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
+{
+    ((std::string *)userp)->append((char *)contents, size * nmemb);
+    return size * nmemb;
+}
+
+struct WriteThis
+{
+    const char *readptr;
+    size_t sizeleft;
+};
+
+
+// read_callback used by sendData (Curl)
+static size_t read_callback(void *dest, size_t size, size_t nmemb, void *userp)
+{
+    struct WriteThis *wt = (struct WriteThis *)userp;
+    size_t buffer_size = size * nmemb;
+
+    if (wt->sizeleft)
+    {
+        /* copy as much as possible from the source to the destination */
+        size_t copy_this_much = wt->sizeleft;
+        if (copy_this_much > buffer_size)
+            copy_this_much = buffer_size;
+        memcpy(dest, wt->readptr, copy_this_much);
+
+        wt->readptr += copy_this_much;
+        wt->sizeleft -= copy_this_much;
+        return copy_this_much; /* we copied this many bytes */
+    }
+
+    return 0; /* no more data left to deliver */
+}
+
+// Send transaction by using Curl
+int Transaction::sendData(std::string data, std::string api_endpoint)
+{
+    CURL *curl;
+    CURLcode res;
+
+    struct WriteThis wt;
+
+    wt.readptr = data.c_str();
+    wt.sizeleft = data.length();
+
+    //std::cout << "Length data:" << (long)wt.sizeleft << std::endl;
+
+    struct curl_slist *headers = NULL;
+    std::string readBuffer;
+    curl = curl_easy_init();
+    if (curl)
+    {
+
+        curl_easy_setopt(curl, CURLOPT_URL, api_endpoint.c_str());
+        headers = curl_slist_append(headers, "Content-Type: application/octet-stream");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
+        curl_easy_setopt(curl, CURLOPT_POST, 1L);
+        curl_easy_setopt(curl, CURLOPT_READFUNCTION, read_callback);
+        curl_easy_setopt(curl, CURLOPT_READDATA, &wt);
+
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE_LARGE, (long)wt.sizeleft);
+
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+
+        if (VERBOSE)
+            curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+        res = curl_easy_perform(curl);
+        curl_easy_cleanup(curl);
+
+        if (VERBOSE)
+            std::cout << "***Transaction sended***" << std::endl;
+        if (VERBOSE)
+            std::cout << "CURL STATUS CODE:" << res << std::endl;
+        std::cout << "Response:" << std::endl;
+        std::cout << readBuffer << std::endl;
+    }
+}

@@ -18,6 +18,7 @@
 #include "Transaction.h"
 #include "Payload.h"
 
+
 #define PRIVATE_KEY_SIZE 32
 #define ETH_HOST "http://127.0.0.1:7545"
 #define PATH " " // It can be nessecary when using INFURA
@@ -42,7 +43,7 @@ int main()
 
     // std::cout << std::hex << hexStr << std::endl;
 
-    std::string from = "b37bedd521a67af5cdce434ec9177e2931d82ff92427386d8e8fc8e363d780a4"; //"afc46b7fdfc9eb29d67362a6e4df578adeb2eb610af22ae8b3fcb8b3956c3bf3";
+    std::string from = "afeb71c4bed8471f376f4a8f58d914a874d871fa09944f8bd83ca3fb763d5cf3"; //"afc46b7fdfc9eb29d67362a6e4df578adeb2eb610af22ae8b3fcb8b3956c3bf3";
 
     uint8_t privateKeyBytes[PRIVATE_KEY_SIZE];
     hexStringToUint8_t(privateKeyBytes, &from[0], PRIVATE_KEY_SIZE);
@@ -56,10 +57,10 @@ int main()
     }
     // std::cout << std::endl;
     // std::string uintToStr = (char *) toStr;
-    uint32_t nonceVal = 1;
+    uint32_t nonceVal = 3;
     uint64_t gasPriceVal = 0x4A817C800; //46038239233;
     uint32_t gasLimitVal = 0x6691B7;
-    std::string toStr = "0x9d98513642716eA671f2b66cA4b5ad0625308eeE"; //CONTRACT_ADDRESS;
+    std::string toStr = "0xEbFF52Bd1754D0a80F62656C2fff4005De1Dc226"; //CONTRACT_ADDRESS;
     std::string valueStr = "0x00";                                    //"0x00";
     uint8_t dataStr[100];
 
@@ -83,6 +84,8 @@ int main()
 
         std::string result = transaction.createTransaction(nonceVal, gasPriceVal, gasLimitVal, &toStr, &valueStr, &p);
         std::cout << "To send : " << result << std::endl;
+
+        int resOfSending = transaction.sendData(result, ETH_HOST);
 
     }
     else if (mode == 2)
