@@ -18,14 +18,6 @@ cd curl
 ./configure --prefix=${WORK_SPACE}/build CC=arm-linux-gnueabi-gcc-7 --host=arm-linux-gnueabi --disable-shared --enable-static
 ```
 
-
-# Compile secp256k1 for ARM architecture
-
-```bash
-cd secp256k1
-./configure CC=arm-linux-gnueabi-gcc-5 --host=arm --enable-exhaustive-tests=no
-```
-
 # Compile Trezor-Crypto for ARM architecture
 
 ```bash
