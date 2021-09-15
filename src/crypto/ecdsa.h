@@ -29,6 +29,10 @@
 #include "hasher.h"
 #include "options.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // curve point x and y
 typedef struct {
   bignum256 x, y;
@@ -124,5 +128,11 @@ int ecdsa_recover_pub_from_sig(const ecdsa_curve *curve, uint8_t *pub_key,
                                int recid);
 int ecdsa_sig_to_der(const uint8_t *sig, uint8_t *der);
 int ecdsa_sig_from_der(const uint8_t *der, size_t der_len, uint8_t sig[64]);
+
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif /* __cplusplus */
+
 
 #endif
